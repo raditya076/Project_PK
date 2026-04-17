@@ -111,6 +111,10 @@ require_once __DIR__ . '/../../components/navbar.php';
                class="sidebar-link">
                 <span class="link-icon">📩</span> Pesan Masuk
             </a>
+            <a href="<?= BASE_URL ?>/pages/pemilik/rekening.php"
+               class="sidebar-link">
+                <span class="link-icon">🏦</span> Rekening Bank
+            </a>
 
         </nav>
 

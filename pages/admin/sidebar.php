@@ -35,6 +35,10 @@ $admin_page = basename($_SERVER['PHP_SELF']);
        class="admin-nav-link <?= ($admin_page === 'bookings.php') ? 'active' : '' ?>">
         <span class="nav-icon">📅</span> Semua Booking
     </a>
+    <a href="<?= BASE_URL ?>/pages/admin/disbursement.php"
+       class="admin-nav-link <?= ($admin_page === 'disbursement.php') ? 'active' : '' ?>">
+        <span class="nav-icon">💸</span> Disbursement
+    </a>
     <a href="<?= BASE_URL ?>/pages/admin/reviews.php"
        class="admin-nav-link <?= ($admin_page === 'reviews.php') ? 'active' : '' ?>">
         <span class="nav-icon">⭐</span> Ulasan
@@ -42,9 +46,6 @@ $admin_page = basename($_SERVER['PHP_SELF']);
 
     <hr class="admin-nav-divider">
     <div class="admin-sidebar-title">Akun</div>
-    <a href="<?= BASE_URL ?>/index.php" class="admin-nav-link">
-        <span class="nav-icon">🌐</span> Lihat Website
-    </a>
     <a href="<?= BASE_URL ?>/pages/logout.php" class="admin-nav-link"
        style="color:rgba(252,165,165,0.8);"
        onclick="return confirm('Yakin ingin keluar?')">
