@@ -87,61 +87,22 @@ if ($user_login && in_array($user_login['role'], ['admin', 'pemilik'])) {
                         </li>
                         <li><hr class="dropdown-divider"></li>
 
-                        <!-- Menu sesuai role -->
-                        <?php if ($user_login['role'] === 'admin'): ?>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/admin/index.php">
-                                    ⚙️ Admin Dashboard
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/admin/users.php">
-                                    👥 Kelola Pengguna
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/admin/kos.php">
-                                    🏘️ Kelola Kos
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/admin/bookings.php">
-                                    📅 Semua Booking
-                                </a>
-                            </li>
-                        <?php elseif ($user_login['role'] === 'pemilik'): ?>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/pemilik/index.php">
-                                    🏠 Dashboard Saya
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/pemilik/booking.php">
-                                    📋 Booking Masuk
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/pemilik/tambah_kos.php">
-                                    ➕ Tambah Kos
-                                </a>
-                            </li>
-                        <?php else: ?>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/riwayat.php">
-                                    📋 Riwayat Booking
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/favorit/index.php">
-                                    ❤️ Kos Favorit
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/cari.php">
-                                    🔍 Cari Kos
-                                </a>
-                            </li>
-                        <?php endif; ?>
+                        <!-- Menu untuk pencari -->
+                        <li>
+                            <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/riwayat.php">
+                                📋 Riwayat Booking
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/favorit/index.php">
+                                ❤️ Kos Favorit
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item-kosta" href="<?= BASE_URL ?>/pages/cari.php">
+                                🔍 Cari Kos
+                            </a>
+                        </li>
 
                         <li><hr class="dropdown-divider"></li>
                         <li>

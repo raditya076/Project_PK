@@ -146,7 +146,7 @@ if (in_array($status_db, ['aktif', 'selesai']) || $transaction_status === 'settl
 
 } else {
     // Fallback: cek dari status DB
-    if (in_array($status_db, ['aktif', 'selesai', 'dibayar'])) {
+    if (in_array($status_db, ['aktif', 'selesai'])) {
         $tipe = 'sukses'; $judul = '🎉 Pembayaran Berhasil!';
         $pesan = 'Pembayaranmu sudah tercatat. Kamar sudah aktif untukmu.';
         $warna = '#15803d'; $bg = '#F0FFF4';
@@ -234,7 +234,7 @@ require_once __DIR__ . '/../components/navbar.php';
         })
         .then(function(r) { return r.json(); })
         .then(function(data) {
-            if (data.status === 'dibayar') {
+            if (data.status === 'aktif') {
                 clearInterval(checkInterval);
                 window.location.reload(); // Reload untuk tampilkan status sukses
             }

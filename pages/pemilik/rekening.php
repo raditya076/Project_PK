@@ -19,7 +19,6 @@ mysqli_stmt_execute($stmt);
 $data = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
 
 $errors  = [];
-$sukses  = false;
 
 // Proses POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

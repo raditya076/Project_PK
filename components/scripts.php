@@ -13,26 +13,7 @@
     <!-- Bootstrap 5 JS Bundle (termasuk Popper.js untuk dropdown, modal, tooltip) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Script Filter Chip (untuk toggle active state pada filter pencarian) -->
     <script>
-    /**
-     * FUNGSI: Menambah efek toggle 'active' pada tombol filter chip
-     * Saat tombol filter diklik, class 'active' berpindah ke tombol yang diklik
-     */
-    document.querySelectorAll('.filter-chip').forEach(function(chip) {
-        chip.addEventListener('click', function() {
-            // Hapus class 'active' dari semua chip dalam grup yang sama
-            var parent = this.closest('.search-filters');
-            if (parent) {
-                parent.querySelectorAll('.filter-chip').forEach(function(c) {
-                    c.classList.remove('active');
-                });
-            }
-            // Tambah class 'active' ke chip yang diklik
-            this.classList.add('active');
-        });
-    });
-
     /**
      * FUNGSI: Animasi sederhana saat kartu kos muncul (fade in dari bawah)
      * Menggunakan Intersection Observer API untuk efek scroll reveal

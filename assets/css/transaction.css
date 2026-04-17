@@ -1,4 +1,4 @@
-﻿/* ====================================================
+/* ====================================================
    FILE: assets/css/transaction.css
    FUNGSI: CSS untuk sistem booking, pembayaran, riwayat
    ==================================================== */
@@ -25,12 +25,8 @@
     color: #92660a;
     border: 1px solid #FCD34D;
 }
-/* Biru   — bukti sudah diupload, menunggu verifikasi */
-.status-badge.dibayar {
-    background: #EFF6FF;
-    color: #1d4ed8;
-    border: 1px solid #93C5FD;
-}
+/* Biru   — backup (tidak dipakai saat ini) */
+/* .status-badge.dibayar { ... } */
 /* Hijau  — aktif, sudah diverifikasi pemilik */
 .status-badge.aktif {
     background: #F0FFF4;
@@ -241,95 +237,6 @@
     line-height: 1.6;
 }
 
-/* Metode pembayaran tabs */
-.metode-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-.metode-tab { display: none; }
-.metode-tab-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 9px 18px;
-    border: 2px solid var(--color-border);
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-text-muted);
-    transition: all 0.2s;
-}
-.metode-tab-label:hover { border-color: var(--color-accent); color: var(--color-accent); }
-.metode-tab:checked + .metode-tab-label {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-    background: rgba(197,0,0,0.05);
-}
-.metode-panel { display: none; }
-.metode-panel.aktif { display: block; }
-
-/* Rekening bank card */
-.bank-rekening-card {
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-    padding: 16px 18px;
-    margin-bottom: 12px;
-}
-.bank-nama { font-size: 11px; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 4px; }
-.bank-nomor { font-size: 20px; font-weight: 900; color: var(--color-text); letter-spacing: 1px; }
-.bank-atas-nama { font-size: 13px; color: var(--color-text-muted); margin-top: 3px; }
-.bank-copy-btn {
-    float: right;
-    padding: 4px 12px;
-    border: 1px solid var(--color-border);
-    border-radius: 5px;
-    background: var(--color-surface);
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    color: var(--color-text-muted);
-    transition: all 0.2s;
-}
-.bank-copy-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
-
-/* QRIS image */
-.qris-container {
-    text-align: center;
-    padding: 20px;
-    background: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: 10px;
-}
-.qris-container img {
-    max-width: 220px;
-    width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-}
-.qris-hint { font-size: 12px; color: var(--color-text-muted); margin-top: 10px; }
-
-/* Upload bukti area */
-.upload-area {
-    border: 2px dashed var(--color-border);
-    border-radius: 10px;
-    padding: 30px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--color-bg);
-    margin-top: 4px;
-}
-.upload-area:hover { border-color: var(--color-accent); background: rgba(197,0,0,0.02); }
-.upload-area input { display: none; }
-.upload-icon { font-size: 36px; margin-bottom: 10px; display: block; }
-.upload-text { font-size: 13px; color: var(--color-text-muted); }
-.upload-text strong { color: var(--color-accent); }
-.upload-preview {
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-    margin-top: 12px;
-    display: none;
-}
 
 /* ─────────────────────────────────────────
    5. RINGKASAN BOOKING (sidebar pembayaran)
@@ -414,45 +321,6 @@
     align-items: center;
     background: var(--color-bg);
 }
-
-/* ─────────────────────────────────────────
-   7. TIMELINE STATUS (di detail booking)
-   ───────────────────────────────────────── */
-.timeline {
-    position: relative;
-    padding: 8px 0;
-}
-.timeline-item {
-    display: flex;
-    gap: 14px;
-    padding-bottom: 20px;
-    position: relative;
-}
-.timeline-item:last-child { padding-bottom: 0; }
-.timeline-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--color-border);
-    flex-shrink: 0;
-    margin-top: 4px;
-    position: relative;
-    z-index: 1;
-}
-.timeline-dot.aktif { background: var(--color-accent); }
-.timeline-dot.done  { background: #15803d; }
-.timeline-item:not(:last-child) .timeline-dot::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 12px;
-    width: 2px;
-    height: calc(100% + 10px);
-    background: var(--color-border);
-    transform: translateX(-50%);
-}
-.timeline-content { flex: 1; }
-.timeline-label { font-size: 13px; font-weight: 700; color: var(--color-text); }
-.timeline-date  { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
 
 /* -----------------------------------------
    8. TOMBOL AKSI (btn-action)

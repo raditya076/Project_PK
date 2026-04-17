@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 /**
  * ====================================================
- * FILE: pages/login.php  (FASE 2 — dengan session)
+ * FILE: pages/login.php
  * FUNGSI: Form login dengan session_start dan redirect role
  * ====================================================
  */

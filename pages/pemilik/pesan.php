@@ -67,6 +67,9 @@ require_once __DIR__ . '/../../components/navbar.php';
             <a href="<?= BASE_URL ?>/pages/pemilik/tambah_kos.php" class="sidebar-link">
                 <span class="link-icon">➕</span> Tambah Kos
             </a>
+            <a href="<?= BASE_URL ?>/pages/pemilik/booking.php" class="sidebar-link">
+                <span class="link-icon">📋</span> Booking Masuk
+            </a>
             <a href="<?= BASE_URL ?>/pages/pemilik/pesan.php" class="sidebar-link aktif">
                 <span class="link-icon">📩</span> Pesan Masuk
                 <?php if ($jumlah_baru > 0): ?>
@@ -74,6 +77,9 @@ require_once __DIR__ . '/../../components/navbar.php';
                         <?= $jumlah_baru ?>
                     </span>
                 <?php endif; ?>
+            </a>
+            <a href="<?= BASE_URL ?>/pages/pemilik/rekening.php" class="sidebar-link">
+                <span class="link-icon">🏦</span> Rekening Bank
             </a>
 
         </nav>

@@ -1,5 +1,5 @@
 /* ====================================================
-   FILE: assets/css/detail.css  (FASE 3 — Full Detail)
+   FILE: assets/css/detail.css
    FUNGSI: CSS khusus halaman detail kos
    ==================================================== */
 
@@ -453,12 +453,6 @@
     margin-bottom: 0;
     line-height: 1.6;
 }
-
-/* --- 9. Badge TIPE (reuse dari style.css) --- */
-.badge-kos { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; }
-.badge-kos.putra  { background:#EBF5FF; color:#1a6ec4; }
-.badge-kos.putri  { background:#FFF0F5; color:#c41a6e; }
-.badge-kos.campur { background:#F0FFF4; color:#1a9c4a; }
 
 /* --- 10. RESPONSIVE --- */
 @media (max-width: 992px) {

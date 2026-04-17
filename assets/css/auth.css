@@ -1,4 +1,4 @@
-﻿/* ====================================================
+/* ====================================================
    FILE: assets/css/auth.css
    FUNGSI: CSS khusus halaman Login & Register
    ==================================================== */
@@ -150,14 +150,6 @@
     color: var(--color-text-muted);
 }
 
-/* Kotak info akun demo */
-.auth-demo-info {
-    margin-top: 16px;
-    padding: 10px 14px;
-    background: var(--color-surface-alt);
-    border-radius: var(--radius-sm);
-    border: 1px dashed var(--color-border);
-}
 
 /* Responsif */
 @media (max-width: 480px) {

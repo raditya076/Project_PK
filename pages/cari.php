@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * ====================================================
  * FILE: pages/cari.php
@@ -142,7 +142,6 @@ require_once '../components/navbar.php';
         <?php if ($jumlah_kos > 0): ?>
             <div class="row g-4">
                 <?php while ($kos = mysqli_fetch_assoc($result)):
-                    $tipe_class   = strtolower($kos['tipe']);
                     $harga_format = 'Rp ' . number_format($kos['harga_per_bulan'], 0, ',', '.');
                     $kamar_sisa   = $kos['jumlah_kamar'] - $kos['kamar_terisi'];
                     $hari_lalu    = (time() - strtotime($kos['created_at'])) / 86400;

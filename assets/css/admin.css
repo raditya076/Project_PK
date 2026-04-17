@@ -206,10 +206,6 @@
 .user-status.aktif    { background: #F0FFF4; color: #15803d; border: 1px solid #86EFAC; }
 .user-status.nonaktif { background: #F5F5F5; color: #737373; border: 1px solid #D4D4D4; }
 
-/* Kos status badge */
-.kos-status.aktif    { background: #F0FFF4; color: #15803d; }
-.kos-status.nonaktif { background: #F5F5F5; color: #737373; }
-.kos-status.pending  { background: #FFFBEB; color: #92660a; }
 
 /* ─── SEARCH & FILTER BAR ─── */
 .admin-filter-bar {

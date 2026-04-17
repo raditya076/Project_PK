@@ -1,7 +1,7 @@
-﻿<?php
+<?php
 /**
  * ====================================================
- * FILE: index.php  (FASE 3 — Filter Lengkap & Favorit)
+ * FILE: index.php
  * FUNGSI: Landing page dengan pencarian multi-filter,
  *         grid kos dari database, tombol favorit.
  * ====================================================
