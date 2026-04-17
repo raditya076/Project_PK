@@ -8,6 +8,7 @@
 # File berikut berisi kredensial DB & API key,
 # JANGAN pernah di-upload ke GitHub!
 config/koneksi.php
+config/midtrans.php
 .env
 
 # -------- File Upload oleh User --------
