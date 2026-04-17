@@ -1,0 +1,453 @@
+/* ====================================================
+   FILE: assets/css/dashboard.css
+   FUNGSI: CSS khusus halaman dashboard pemilik kos
+   Berisi: sidebar layout, tabel kos, statistik cards
+   ==================================================== */
+
+/* --- 1. LAYOUT DASHBOARD (Sidebar + Konten) --- */
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh; /* Navbar sudah tidak tampil → full height */
+    background: var(--color-bg);
+}
+
+/* Sidebar kiri */
+.dashboard-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    padding: 28px 0;
+    position: sticky;
+    top: 0;          /* Navbar tidak ada → menempel dari paling atas */
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Profil di atas sidebar */
+.sidebar-profile {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 20px;
+}
+.sidebar-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+.sidebar-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sidebar-role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(197,0,0,0.1);
+    color: var(--color-accent);
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Link menu sidebar */
+.sidebar-menu-label {
+    padding: 0 20px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: 6px;
+}
+.sidebar-menu {
+    padding: 0 10px;
+    margin-bottom: 24px;
+}
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    transition: all var(--transition);
+    text-decoration: none;
+}
+.sidebar-link:hover {
+    background: var(--color-surface-alt);
+    color: var(--color-text);
+}
+.sidebar-link.aktif {
+    background: rgba(197,0,0,0.08);
+    color: var(--color-accent);
+}
+.sidebar-link .link-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+.sidebar-link-logout {
+    color: #b91c1c !important;
+}
+.sidebar-link-logout:hover {
+    background: #FFF3F3 !important;
+    color: #b91c1c !important;
+}
+
+/* Area konten utama */
+.dashboard-content {
+    flex: 1;
+    padding: 32px;
+    min-width: 0; /* Fix flexbox overflow */
+}
+
+/* Header halaman dashboard */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.dashboard-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text);
+    letter-spacing: -0.5px;
+    margin-bottom: 2px;
+}
+.dashboard-subtitle {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+/* --- 2. KARTU STATISTIK --- */
+.stat-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+.stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.stat-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.stat-card-icon.merah   { background: rgba(197,0,0,0.10); }
+.stat-card-icon.hijau   { background: rgba(21,128,61,0.10); }
+.stat-card-icon.biru    { background: rgba(29,78,216,0.10); }
+.stat-card-icon.kuning  { background: rgba(146,64,14,0.10); }
+
+.stat-card-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.stat-card-label {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* --- 3. TABEL DAFTAR KOS --- */
+.table-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+.table-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--color-border);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.table-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+.table-kosta {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.table-kosta th {
+    background: var(--color-surface-alt);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+}
+.table-kosta td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-text);
+    vertical-align: middle;
+}
+.table-kosta tr:last-child td {
+    border-bottom: none;
+}
+.table-kosta tr:hover td {
+    background: var(--color-surface-alt);
+}
+.table-kos-name {
+    font-weight: 700;
+    color: var(--color-text);
+}
+.table-kos-location {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+}
+
+/* Status badge di tabel */
+.status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.status-pill.aktif    { background: #F0FFF4; color: #15803d; }
+.status-pill.nonaktif { background: #F9FAFB; color: #6B7280; }
+.status-pill.pending  { background: #FFFBEB; color: #92400e; }
+
+/* Tombol aksi di tabel (Edit/Hapus) */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: var(--font-main);
+    background: none;
+}
+.btn-action.edit {
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+}
+.btn-action.edit:hover {
+    border-color: #1d4ed8;
+    color: #1d4ed8;
+    background: #EFF6FF;
+}
+.btn-action.hapus {
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+}
+.btn-action.hapus:hover {
+    border-color: #b91c1c;
+    color: #b91c1c;
+    background: #FFF3F3;
+}
+
+/* --- 4. FORM TAMBAH/EDIT KOS --- */
+.form-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+.form-card-section {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--color-border);
+}
+.form-card-section:last-child {
+    border-bottom: none;
+}
+.form-card-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-border);
+}
+.form-group-kosta {
+    margin-bottom: 18px;
+}
+.form-label-kosta {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+.form-label-kosta .wajib {
+    color: var(--color-accent);
+    margin-left: 2px;
+}
+.form-input-kosta,
+.form-select-kosta,
+.form-textarea-kosta {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background: var(--color-bg);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-input-kosta:focus,
+.form-select-kosta:focus,
+.form-textarea-kosta:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(197,0,0,0.10);
+    background: #fff;
+}
+.form-textarea-kosta {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+}
+.form-hint {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 5px;
+}
+
+/* Checkbox fasilitas grid */
+.fasilitas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    user-select: none;
+}
+.check-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+}
+.check-item:has(input:checked) {
+    border-color: var(--color-accent);
+    background: rgba(197,0,0,0.05);
+    color: var(--color-text);
+}
+
+/* Preview foto upload */
+.upload-zone {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    background: var(--color-bg);
+}
+.upload-zone:hover,
+.upload-zone.drag-over {
+    border-color: var(--color-accent);
+    background: rgba(197,0,0,0.04);
+}
+.upload-zone .upload-icon { font-size: 36px; margin-bottom: 10px; }
+.upload-zone .upload-text { font-size: 14px; font-weight: 600; color: var(--color-text); margin-bottom: 4px; }
+.upload-zone .upload-hint { font-size: 12px; color: var(--color-text-muted); }
+
+.foto-preview-wrapper {
+    display: none;
+    margin-top: 14px;
+    position: relative;
+    display: inline-block;
+}
+.foto-preview-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+}
+
+/* Footer form (tombol submit) */
+.form-footer {
+    padding: 20px 28px;
+    background: var(--color-surface-alt);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* --- 5. RESPONSIVE --- */
+@media (max-width: 992px) {
+    .dashboard-sidebar {
+        display: none; /* Sembunyikan sidebar di mobile (akan diganti drawer) */
+    }
+    .dashboard-content {
+        padding: 20px 16px;
+    }
+}

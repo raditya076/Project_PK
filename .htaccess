@@ -1,0 +1,60 @@
+# ====================================================
+# FILE: .htaccess
+# FUNGSI: Konfigurasi Apache untuk project Kosta'
+# ====================================================
+
+# Aktifkan mod_rewrite (untuk URL rewriting)
+Options -Indexes
+Options +FollowSymLinks
+
+# Sembunyikan listing isi folder (keamanan)
+# Options -Indexes  <- sudah di atas
+
+# Set timezone default ke WIB untuk fungsi PHP date()
+php_value date.timezone "Asia/Jakarta"
+
+# Tampilkan error saat development (nonaktifkan di production!)
+php_flag display_errors On
+php_value error_reporting 32767
+
+# -------------------------------------------------------
+# CUSTOM ERROR PAGES
+# -------------------------------------------------------
+ErrorDocument 404 /Project1/pages/404.php
+
+# -------------------------------------------------------
+# BLOKIR AKSES KE FILE SENSITIF
+# File SQL dan config tidak boleh diakses via browser
+# -------------------------------------------------------
+<FilesMatch "\.(sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# -------------------------------------------------------
+# KOMPRESI GZIP — memperkecil ukuran file sebelum dikirim
+# -------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript
+</IfModule>
+
+# -------------------------------------------------------
+# BROWSER CACHE — aset statis tidak perlu diunduh ulang
+# -------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg  "access plus 1 month"
+    ExpiresByType image/png   "access plus 1 month"
+    ExpiresByType image/webp  "access plus 1 month"
+    ExpiresByType text/css    "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+</IfModule>
+
+# -------------------------------------------------------
+# HEADER KEAMANAN DASAR
+# -------------------------------------------------------
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+

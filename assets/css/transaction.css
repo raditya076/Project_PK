@@ -1,0 +1,519 @@
+﻿/* ====================================================
+   FILE: assets/css/transaction.css
+   FUNGSI: CSS untuk sistem booking, pembayaran, riwayat
+   ==================================================== */
+
+/* ─────────────────────────────────────────
+   1. BADGE STATUS BOOKING
+   Warna sesuai tahap transaksi
+   ───────────────────────────────────────── */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+/* Kuning  — menunggu pembayaran */
+.status-badge.menunggu_pembayaran {
+    background: #FFF9E6;
+    color: #92660a;
+    border: 1px solid #FCD34D;
+}
+/* Biru   — bukti sudah diupload, menunggu verifikasi */
+.status-badge.dibayar {
+    background: #EFF6FF;
+    color: #1d4ed8;
+    border: 1px solid #93C5FD;
+}
+/* Hijau  — aktif, sudah diverifikasi pemilik */
+.status-badge.aktif {
+    background: #F0FFF4;
+    color: #15803d;
+    border: 1px solid #86EFAC;
+}
+/* Merah  — ditolak pemilik */
+.status-badge.ditolak {
+    background: #FFF3F3;
+    color: #b91c1c;
+    border: 1px solid #FCA5A5;
+}
+/* Abu    — selesai (masa sewa berakhir) */
+.status-badge.selesai {
+    background: #F5F5F5;
+    color: #525252;
+    border: 1px solid #D4D4D4;
+}
+/* Coklat — dibatalkan user */
+.status-badge.dibatalkan {
+    background: #FAFAF9;
+    color: #78716c;
+    border: 1px solid #D6D3D1;
+}
+
+/* ─────────────────────────────────────────
+   2. BOOKING FORM — halaman booking.php
+   ───────────────────────────────────────── */
+.booking-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    padding: 40px 0 80px;
+}
+@media (max-width: 991px) {
+    .booking-layout { grid-template-columns: 1fr; }
+}
+
+.booking-form-card {
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 28px 32px;
+}
+.booking-form-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+}
+.booking-form-subtitle {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* Durasi buttons */
+.durasi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 4px;
+}
+.durasi-option input { display: none; }
+.durasi-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--color-surface);
+}
+.durasi-option label:hover {
+    border-color: var(--color-accent);
+    background: rgba(197,0,0,0.03);
+}
+.durasi-option input:checked + label {
+    border-color: var(--color-accent);
+    background: rgba(197,0,0,0.06);
+    color: var(--color-accent);
+}
+.durasi-num { font-size: 20px; font-weight: 900; }
+.durasi-txt { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+
+/* Ringkasan harga di form */
+.price-summary-box {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+}
+.price-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    padding: 5px 0;
+}
+.price-summary-row.total {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-accent);
+    border-top: 1px solid var(--color-border);
+    padding-top: 12px;
+    margin-top: 8px;
+}
+.price-summary-label { color: var(--color-text-muted); }
+
+/* ─────────────────────────────────────────
+   3. SIDEBAR BOOKING — info kos ringkas
+   ───────────────────────────────────────── */
+.booking-kos-sidebar {
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    height: fit-content;
+    position: sticky;
+    top: 80px;
+}
+.booking-kos-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+}
+.booking-kos-img-placeholder {
+    width: 100%;
+    height: 160px;
+    background: var(--color-surface-alt);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+.booking-kos-info { padding: 18px 20px; }
+.booking-kos-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 4px;
+}
+.booking-kos-loc {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-bottom: 14px;
+}
+.booking-kos-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 0;
+    border-top: 1px solid var(--color-border);
+}
+.booking-kos-price { font-size: 17px; font-weight: 900; color: var(--color-accent); }
+.booking-kos-period { font-size: 12px; color: var(--color-text-muted); }
+
+/* ─────────────────────────────────────────
+   4. HALAMAN PEMBAYARAN
+   ───────────────────────────────────────── */
+.payment-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    padding: 40px 0 80px;
+}
+@media (max-width: 991px) {
+    .payment-layout { grid-template-columns: 1fr; }
+}
+
+.payment-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+.payment-step:last-child { border-bottom: none; }
+.payment-step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.payment-step-content { flex: 1; }
+.payment-step-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 4px;
+}
+.payment-step-detail {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+/* Metode pembayaran tabs */
+.metode-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.metode-tab { display: none; }
+.metode-tab-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border: 2px solid var(--color-border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    transition: all 0.2s;
+}
+.metode-tab-label:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.metode-tab:checked + .metode-tab-label {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: rgba(197,0,0,0.05);
+}
+.metode-panel { display: none; }
+.metode-panel.aktif { display: block; }
+
+/* Rekening bank card */
+.bank-rekening-card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+}
+.bank-nama { font-size: 11px; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 4px; }
+.bank-nomor { font-size: 20px; font-weight: 900; color: var(--color-text); letter-spacing: 1px; }
+.bank-atas-nama { font-size: 13px; color: var(--color-text-muted); margin-top: 3px; }
+.bank-copy-btn {
+    float: right;
+    padding: 4px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    background: var(--color-surface);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: all 0.2s;
+}
+.bank-copy-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* QRIS image */
+.qris-container {
+    text-align: center;
+    padding: 20px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+}
+.qris-container img {
+    max-width: 220px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.qris-hint { font-size: 12px; color: var(--color-text-muted); margin-top: 10px; }
+
+/* Upload bukti area */
+.upload-area {
+    border: 2px dashed var(--color-border);
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--color-bg);
+    margin-top: 4px;
+}
+.upload-area:hover { border-color: var(--color-accent); background: rgba(197,0,0,0.02); }
+.upload-area input { display: none; }
+.upload-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+.upload-text { font-size: 13px; color: var(--color-text-muted); }
+.upload-text strong { color: var(--color-accent); }
+.upload-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-top: 12px;
+    display: none;
+}
+
+/* ─────────────────────────────────────────
+   5. RINGKASAN BOOKING (sidebar pembayaran)
+   ───────────────────────────────────────── */
+.booking-summary-card {
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+}
+.booking-summary-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-text);
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--color-border);
+}
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    padding: 6px 0;
+}
+.summary-row .label { color: var(--color-text-muted); flex-shrink: 0; }
+.summary-row .value { font-weight: 600; color: var(--color-text); text-align: right; }
+.summary-total {
+    border-top: 1px solid var(--color-border);
+    padding-top: 14px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 900;
+}
+.summary-total .value { color: var(--color-accent); }
+
+/* ─────────────────────────────────────────
+   6. TABEL RIWAYAT BOOKING
+   ───────────────────────────────────────── */
+.riwayat-card {
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 16px;
+    transition: box-shadow 0.2s;
+}
+.riwayat-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+.riwayat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px 14px;
+    flex-wrap: wrap;
+}
+.riwayat-kos-name { font-size: 15px; font-weight: 800; color: var(--color-text); }
+.riwayat-kos-loc  { font-size: 12px; color: var(--color-text-muted); margin-top: 3px; }
+.riwayat-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--color-border);
+}
+.riwayat-info-col {
+    padding: 14px 20px;
+    border-right: 1px solid var(--color-border);
+}
+.riwayat-info-col:last-child { border-right: none; }
+.riwayat-info-label { font-size: 11px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.riwayat-info-value { font-size: 14px; font-weight: 700; color: var(--color-text); margin-top: 3px; }
+.riwayat-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    background: var(--color-bg);
+}
+
+/* ─────────────────────────────────────────
+   7. TIMELINE STATUS (di detail booking)
+   ───────────────────────────────────────── */
+.timeline {
+    position: relative;
+    padding: 8px 0;
+}
+.timeline-item {
+    display: flex;
+    gap: 14px;
+    padding-bottom: 20px;
+    position: relative;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+.timeline-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--color-border);
+    flex-shrink: 0;
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+}
+.timeline-dot.aktif { background: var(--color-accent); }
+.timeline-dot.done  { background: #15803d; }
+.timeline-item:not(:last-child) .timeline-dot::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 12px;
+    width: 2px;
+    height: calc(100% + 10px);
+    background: var(--color-border);
+    transform: translateX(-50%);
+}
+.timeline-content { flex: 1; }
+.timeline-label { font-size: 13px; font-weight: 700; color: var(--color-text); }
+.timeline-date  { font-size: 11px; color: var(--color-text-muted); margin-top: 2px; }
+
+/* -----------------------------------------
+   8. TOMBOL AKSI (btn-action)
+   ----------------------------------------- */
+.btn-action {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 7px 14px; border-radius: 6px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    font-size: 12px; font-weight: 700;
+    color: var(--color-text-muted); cursor: pointer;
+    font-family: var(--font-main); text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
+}
+.btn-action:hover { border-color:var(--color-accent); color:var(--color-accent); background:rgba(197,0,0,0.04); }
+.btn-action.edit  { border-color:#86EFAC; background:#F0FFF4; color:#15803d; }
+.btn-action.edit:hover  { background:#15803d; color:white; border-color:#15803d; }
+.btn-action.hapus { border-color:#FCA5A5; background:#FFF3F3; color:#b91c1c; }
+.btn-action.hapus:hover { background:#b91c1c; color:white; border-color:#b91c1c; }
+
+/* -----------------------------------------
+   9. FORM ELEMENTS
+   ----------------------------------------- */
+.form-group-kosta { margin-bottom: 20px; }
+.form-label-kosta {
+    display: block; font-size: 12px; font-weight: 700;
+    color: var(--color-text-muted); text-transform: uppercase;
+    letter-spacing: 0.06em; margin-bottom: 8px;
+}
+.form-input-kosta,
+.form-textarea-kosta {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--color-border); border-radius: 8px;
+    font-size: 14px; font-family: var(--font-main);
+    color: var(--color-text); background: var(--color-surface);
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input-kosta:focus,
+.form-textarea-kosta:focus { border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(197,0,0,0.08); }
+.form-textarea-kosta { resize: vertical; min-height: 90px; }
+
+/* -----------------------------------------
+   10. ALERT MESSAGES
+   ----------------------------------------- */
+.alert-kosta {
+    padding: 12px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    border-left: 4px solid transparent;
+    margin-bottom: 16px; line-height: 1.55;
+}
+.alert-kosta.error   { background:#FFF3F3; color:#b91c1c; border-left-color:#b91c1c; }
+.alert-kosta.sukses  { background:#F0FFF4; color:#15803d; border-left-color:#15803d; }
+.alert-kosta.success { background:#F0FFF4; color:#15803d; border-left-color:#15803d; }
+.alert-kosta.info    { background:#EFF6FF; color:#1d4ed8; border-left-color:#1d4ed8; }
+
+/* -----------------------------------------
+   11. BREADCRUMB BAR
+   ----------------------------------------- */
+.breadcrumb-bar { background:var(--color-surface); border-bottom:1px solid var(--color-border); padding:10px 0; }
+.breadcrumb-bar .breadcrumb { font-size:12px; margin:0; }
+.breadcrumb-bar .breadcrumb-item a { color:var(--color-text-muted); font-weight:600; text-decoration:none; }
+.breadcrumb-bar .breadcrumb-item a:hover { color:var(--color-accent); }
+.breadcrumb-bar .breadcrumb-item.active { color:var(--color-text); font-weight:700; }
+.breadcrumb-bar .breadcrumb-item+.breadcrumb-item::before { color:var(--color-border); }

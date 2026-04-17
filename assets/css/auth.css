@@ -1,0 +1,167 @@
+﻿/* ====================================================
+   FILE: assets/css/auth.css
+   FUNGSI: CSS khusus halaman Login & Register
+   ==================================================== */
+
+/* Layout wrapper utama halaman auth */
+.auth-page {
+    min-height: calc(100vh - 64px); /* Tinggi penuh dikurangi navbar */
+    display: flex;
+    align-items: center;
+    padding: 48px 0;
+    background: var(--color-bg);
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(197,0,0,0.04) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(197,0,0,0.04) 0%, transparent 60%);
+}
+
+/* Kartu form auth */
+.auth-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    box-shadow: var(--shadow-md);
+}
+
+/* Header bagian atas kartu */
+.auth-card-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+.auth-logo {
+    font-size: 40px;
+    margin-bottom: 12px;
+}
+.auth-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+}
+.auth-subtitle {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    margin-bottom: 0;
+}
+
+/* Alert / pesan notifikasi */
+.alert-kosta {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+.alert-kosta.alert-error {
+    background: #FFF3F3;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+.alert-kosta.alert-success {
+    background: #F0FFF4;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+
+/* Grup form (label + input) */
+.form-group-kosta {
+    margin-bottom: 18px;
+}
+.form-label-kosta {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 6px;
+}
+.form-input-kosta {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background: var(--color-bg);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-input-kosta:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(197,0,0,0.10);
+    background: #fff;
+}
+.form-input-kosta::placeholder {
+    color: #b0aaa4;
+    font-weight: 400;
+}
+
+/* Role selector (pilihan pencari / pemilik) */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.role-option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 10px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+}
+.role-option input[type="radio"] {
+    /* Sembunyikan radio asli, gunakan tampilan kustom */
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+.role-option:hover {
+    border-color: var(--color-accent);
+    background: rgba(197,0,0,0.03);
+}
+.role-option.selected {
+    border-color: var(--color-accent);
+    background: rgba(197,0,0,0.06);
+}
+.role-icon {
+    font-size: 22px;
+}
+.role-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+/* Link switch (login <-> register) */
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 0;
+    font-size: 13px;
+    color: var(--color-text-muted);
+}
+
+/* Kotak info akun demo */
+.auth-demo-info {
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--color-border);
+}
+
+/* Responsif */
+@media (max-width: 480px) {
+    .auth-card {
+        padding: 28px 20px;
+    }
+}

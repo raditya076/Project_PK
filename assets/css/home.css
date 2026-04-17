@@ -1,0 +1,508 @@
+/* ====================================================
+   FILE: assets/css/home.css  (FASE 3 — Filter Lengkap)
+   FUNGSI: CSS landing page dengan filter multi-kriteria
+   ==================================================== */
+
+/* --- 1. HERO SECTION --- */
+.hero-section {
+    background: linear-gradient(135deg, #1C1C1C 0%, #2d1f1f 60%, #3a1010 100%);
+    padding: 80px 0 100px;
+    position: relative;
+    overflow: hidden;
+}
+.hero-section::before {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(197,0,0,0.15) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    border-radius: 50%; pointer-events: none;
+}
+.hero-section::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(197,0,0,0.10) 0%, transparent 70%);
+    bottom: -80px; left: -60px;
+    border-radius: 50%; pointer-events: none;
+}
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(197, 0, 0, 0.15);
+    border: 1px solid rgba(197, 0, 0, 0.3);
+    color: #ff6b6b;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+}
+.hero-title {
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.2;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+}
+.hero-title .highlight { color: var(--color-accent); }
+.hero-subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 16px;
+    max-width: 480px;
+    margin-bottom: 36px;
+    line-height: 1.7;
+}
+.hero-stats {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin-top: 32px;
+}
+.hero-stat-item { text-align: center; }
+.hero-stat-item .stat-number {
+    font-size: 22px;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1;
+}
+.hero-stat-item .stat-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 2px;
+}
+
+/* --- 2. SEARCH BOX MELAYANG --- */
+.search-floating-wrapper {
+    margin-top: -36px;
+    position: relative;
+    z-index: 10;
+}
+.search-box {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 24px 28px;
+    border: 1px solid var(--color-border);
+}
+.search-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+}
+
+/* Baris input utama */
+.search-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+.search-input-group .form-control {
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 11px 16px;
+    font-size: 14px;
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+.search-input-group .form-control:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(197,0,0,0.10);
+    background-color: #fff;
+}
+.search-input-group .form-control::placeholder {
+    color: var(--color-text-muted);
+    font-weight: 400;
+}
+.search-select {
+    border: 1.5px solid var(--color-border) !important;
+    background-color: var(--color-bg) !important;
+    font-family: var(--font-main);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* Filter lanjutan (baris kedua) */
+.filter-advanced {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+}
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+/* Filter chips (Tipe) */
+.filter-chip {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1.5px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+.filter-chip:hover,
+.filter-chip.active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: rgba(197,0,0,0.06);
+}
+/* Filter Select (Harga, Urutan) */
+.filter-select {
+    padding: 5px 10px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 6px;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-main);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: border-color var(--transition);
+}
+.filter-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+}
+/* Filter Checkbox (Fasilitas) */
+.filter-check {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--color-border);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    user-select: none;
+}
+.filter-check input[type="checkbox"] {
+    display: none; /* Sembunyikan checkbox asli */
+}
+.filter-check:hover,
+.filter-check.active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: rgba(197,0,0,0.06);
+}
+/* Tombol reset filter */
+.filter-reset-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1.5px solid #fca5a5;
+    background: #FFF3F3;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition);
+}
+.filter-reset-btn:hover {
+    background: #b91c1c;
+    color: white;
+}
+
+/* --- 3. SECTION LISTING KOS --- */
+.section-listing {
+    padding: 56px 0 80px;
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text);
+    letter-spacing: -0.5px;
+}
+.section-subtitle {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+    margin-bottom: 0;
+}
+.lihat-semua {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-accent);
+    white-space: nowrap;
+}
+.lihat-semua:hover { color: var(--color-accent-hover); }
+
+/* --- 4. KARTU KOS --- */
+.kos-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.kos-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: transparent;
+}
+
+/* Wrapper gambar */
+.kos-card-img-wrapper {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: var(--color-surface-alt);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.kos-card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+.kos-card:hover .kos-card-img-wrapper img {
+    transform: scale(1.06);
+}
+.kos-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #F0EDE8 0%, #E8E4DC 100%);
+    color: var(--color-text-muted);
+}
+.kos-img-placeholder .placeholder-icon { font-size: 40px; opacity: 0.4; margin-bottom: 8px; }
+.kos-img-placeholder .placeholder-text { font-size: 11px; font-weight: 600; opacity: 0.4; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Ribbon */
+.kos-ribbon {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: var(--color-accent);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Tombol Favorit/Wishlist */
+.kos-wishlist-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,0.92);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all var(--transition);
+    backdrop-filter: blur(4px);
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.kos-wishlist-btn:hover {
+    transform: scale(1.15);
+    background: white;
+}
+.kos-wishlist-btn.aktif {
+    background: white;
+    box-shadow: 0 2px 8px rgba(197,0,0,0.25);
+}
+
+/* Form wrapper tombol favorit (tidak boleh mengganggu layout) */
+.favorit-form {
+    position: absolute;
+    top: 10px; right: 10px;
+    margin: 0; padding: 0;
+}
+
+/* Body kartu */
+.kos-card-body {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.kos-card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 4px;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+}
+.kos-card-location {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+}
+.kos-card-location .icon { font-size: 13px; }
+.kos-facilities {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.facility-item {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-weight: 500;
+}
+.kos-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+}
+.kos-card-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-accent);
+}
+.kos-card-price span {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-muted);
+}
+.kamar-warning {
+    font-size: 11px;
+    color: #e67e00;
+    font-weight: 600;
+    margin: 4px 0 0;
+}
+.kamar-full {
+    font-size: 11px;
+    color: #aaa;
+    margin: 4px 0 0;
+}
+
+/* Badge Tipe */
+.badge-kos {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.badge-kos.putra  { background: #EBF5FF; color: #1a6ec4; }
+.badge-kos.putri  { background: #FFF0F5; color: #c41a6e; }
+.badge-kos.campur { background: #F0FFF4; color: #1a9c4a; }
+
+/* --- 5. CTA SECTION --- */
+.cta-section {
+    background: var(--color-text);
+    padding: 48px 0;
+}
+.cta-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+.cta-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 6px;
+}
+.cta-subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin: 0;
+    max-width: 480px;
+}
+.cta-btn {
+    color: #FFFFFF !important;
+    border-color: rgba(255,255,255,0.4) !important;
+    white-space: nowrap;
+}
+.cta-btn:hover {
+    background: white !important;
+    color: var(--color-text) !important;
+    border-color: white !important;
+}
+
+/* --- 6. EMPTY STATE --- */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--color-text-muted);
+}
+.empty-state .empty-icon  { font-size: 56px; margin-bottom: 16px; opacity: 0.4; }
+.empty-state h5 { font-size: 16px; font-weight: 700; color: var(--color-text); margin-bottom: 6px; }
+.empty-state p  { font-size: 13px; margin: 0; }
+
+/* --- 7. RESPONSIVE --- */
+@media (max-width: 768px) {
+    .hero-section { padding: 56px 0 80px; }
+    .search-box { padding: 18px 18px; }
+    .search-input-group {
+        flex-direction: column;
+    }
+    .search-select { max-width: 100% !important; }
+    .filter-advanced { gap: 8px; }
+    .section-listing { padding: 36px 0 60px; }
+    .cta-inner { flex-direction: column; text-align: center; }
+}

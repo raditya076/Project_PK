@@ -1,0 +1,284 @@
+/* ====================================================
+   FILE: assets/css/admin.css
+   FUNGSI: CSS khusus panel admin Kosta'
+   ==================================================== */
+
+/* ─── LAYOUT ADMIN ─── */
+/* Navbar & footer tidak ditampilkan untuk admin (dihandle via PHP) */
+.admin-wrapper {
+    display: flex;
+    min-height: 100vh; /* Navbar tidak ada → full height */
+}
+
+/* ─── SIDEBAR ─── */
+.admin-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--color-text);
+    padding: 24px 0;
+    position: sticky;
+    top: 0;                          /* Navbar tidak ada → dari paling atas */
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+}
+.admin-sidebar-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0 20px 8px;
+}
+.admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    border-radius: 0;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+}
+.admin-nav-link:hover {
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+}
+.admin-nav-link.active {
+    background: rgba(197,0,0,0.15);
+    color: #fff;
+    border-left-color: var(--color-accent);
+}
+.admin-nav-link .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.admin-nav-divider {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin: 12px 0;
+}
+
+/* ─── MAIN CONTENT ─── */
+.admin-main {
+    flex: 1;
+    min-width: 0;                    /* mencegah overflow tabel */
+    background: var(--color-bg);
+    padding: 32px;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Responsive: sembunyikan sidebar di mobile */
+@media (max-width: 991px) {
+    .admin-sidebar  { display: none; }
+    .admin-main     { padding: 20px 16px; }
+}
+@media (max-width: 768px) { .admin-main { padding: 20px 16px; } }
+
+.admin-page-header {
+    margin-bottom: 28px;
+}
+.admin-page-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text);
+    letter-spacing: -0.5px;
+}
+.admin-page-subtitle {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 4px;
+}
+
+/* ─── STAT CARDS ─── */
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+}
+.admin-stat-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+.admin-stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.admin-stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+.admin-stat-icon.red    { background: rgba(197,0,0,0.10); }
+.admin-stat-icon.blue   { background: rgba(29,78,216,0.10); }
+.admin-stat-icon.green  { background: rgba(21,128,61,0.10); }
+.admin-stat-icon.orange { background: rgba(234,88,12,0.10); }
+.admin-stat-icon.purple { background: rgba(109,40,217,0.10); }
+.admin-stat-value {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--color-text);
+    line-height: 1.1;
+}
+.admin-stat-label {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+    font-weight: 600;
+}
+.admin-stat-change {
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+.admin-stat-change.up   { color: #15803d; }
+.admin-stat-change.down { color: #b91c1c; }
+
+/* ─── ADMIN TABLE ─── */
+.admin-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+.admin-card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.admin-card-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-text);
+}
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+.admin-table thead th {
+    background: var(--color-surface-alt);
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border);
+}
+.admin-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s;
+}
+.admin-table tbody tr:last-child { border-bottom: none; }
+.admin-table tbody tr:hover { background: rgba(0,0,0,0.018); }
+.admin-table tbody td { padding: 12px 16px; vertical-align: middle; }
+
+/* Role badge */
+.role-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.role-badge.pencari { background: #EFF6FF; color: #1d4ed8; }
+.role-badge.pemilik { background: #F0FFF4; color: #15803d; }
+.role-badge.admin   { background: rgba(197,0,0,0.1); color: var(--color-accent); }
+
+/* User status badge */
+.user-status { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.user-status.aktif    { background: #F0FFF4; color: #15803d; border: 1px solid #86EFAC; }
+.user-status.nonaktif { background: #F5F5F5; color: #737373; border: 1px solid #D4D4D4; }
+
+/* Kos status badge */
+.kos-status.aktif    { background: #F0FFF4; color: #15803d; }
+.kos-status.nonaktif { background: #F5F5F5; color: #737373; }
+.kos-status.pending  { background: #FFFBEB; color: #92660a; }
+
+/* ─── SEARCH & FILTER BAR ─── */
+.admin-filter-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.admin-search {
+    padding: 7px 12px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-main);
+    color: var(--color-text);
+    background: var(--color-surface);
+    outline: none;
+    min-width: 200px;
+    transition: border-color 0.2s;
+}
+.admin-search:focus { border-color: var(--color-accent); }
+.admin-select {
+    padding: 7px 12px;
+    border: 1.5px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--font-main);
+    background: var(--color-surface);
+    outline: none;
+    cursor: pointer;
+}
+
+/* ─── QUICK ACTION BUTTON ─── */
+.btn-admin {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 6px 14px; border-radius: 6px;
+    font-size: 12px; font-weight: 700;
+    cursor: pointer; border: 1.5px solid;
+    font-family: var(--font-main); text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
+}
+.btn-admin.primary { background: var(--color-accent); color: white; border-color: var(--color-accent); }
+.btn-admin.primary:hover { background: var(--color-accent-hover); }
+.btn-admin.danger  { background: #FFF3F3; color: #b91c1c; border-color: #FCA5A5; }
+.btn-admin.danger:hover  { background: #b91c1c; color: white; border-color: #b91c1c; }
+.btn-admin.success { background: #F0FFF4; color: #15803d; border-color: #86EFAC; }
+.btn-admin.success:hover { background: #15803d; color: white; border-color: #15803d; }
+.btn-admin.neutral { background: var(--color-surface); color: var(--color-text-muted); border-color: var(--color-border); }
+.btn-admin.neutral:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* ─── EMPTY STATE ─── */
+.admin-empty {
+    text-align: center; padding: 48px 20px;
+    color: var(--color-text-muted);
+}
+.admin-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
+
+/* ─── PAGINATION ─── */
+.admin-pagination {
+    display: flex; gap: 4px; align-items: center;
+    padding: 14px 20px; border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+}
+.admin-page-btn {
+    padding: 5px 10px; border-radius: 5px; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--color-border); background: var(--color-surface);
+    color: var(--color-text-muted); cursor: pointer; text-decoration: none;
+    transition: all 0.2s;
+}
+.admin-page-btn:hover, .admin-page-btn.active {
+    background: var(--color-accent); color: white; border-color: var(--color-accent);
+}

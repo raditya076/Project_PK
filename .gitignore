@@ -1,0 +1,36 @@
+# ====================================================
+# .gitignore — Kosta Project
+# File ini memberitahu Git file apa yang TIDAK perlu
+# di-upload ke GitHub
+# ====================================================
+
+# -------- File Konfigurasi Sensitif --------
+# File berikut berisi kredensial DB & API key,
+# JANGAN pernah di-upload ke GitHub!
+config/koneksi.php
+.env
+
+# -------- File Upload oleh User --------
+# Foto/file yang diupload user saat runtime
+assets/uploads/
+
+# -------- Cache & Log --------
+*.log
+*.cache
+
+# -------- File IDE / Editor --------
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# -------- OS Generated Files --------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# -------- Composer (jika ada) --------
+/vendor/
+
+# -------- Node Modules (jika ada) --------
+node_modules/
