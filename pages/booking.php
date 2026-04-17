@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * ====================================================
  * FILE: pages/booking.php
@@ -51,7 +51,7 @@ if ($kamar_sisa <= 0) {
 $cek_aktif = mysqli_prepare($koneksi,
     "SELECT id FROM bookings
      WHERE kos_id = ? AND penyewa_id = ?
-     AND status IN ('menunggu_pembayaran','dibayar','aktif')
+     AND status IN ('menunggu_pembayaran','aktif')
      LIMIT 1"
 );
 mysqli_stmt_bind_param($cek_aktif, 'ii', $kos_id, $user['id']);

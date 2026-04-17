@@ -17,7 +17,7 @@ $offset        = ($page - 1) * $per_page;
 
 $where  = ['1=1']; $params = []; $types = '';
 
-$valid_status = ['menunggu_pembayaran','dibayar','aktif','ditolak','selesai','dibatalkan'];
+$valid_status = ['menunggu_pembayaran','aktif','ditolak','selesai','dibatalkan'];
 if ($filter_status && in_array($filter_status, $valid_status)) {
     $where[] = 'b.status = ?'; $params[] = $filter_status; $types .= 's';
 }
@@ -73,7 +73,6 @@ require_once __DIR__ . '/../../components/navbar.php';
 
 $status_label = [
     'menunggu_pembayaran' => 'Menunggu Bayar',
-    'dibayar'             => 'Dibayar',
     'aktif'               => 'Aktif',
     'ditolak'             => 'Ditolak',
     'selesai'             => 'Selesai',

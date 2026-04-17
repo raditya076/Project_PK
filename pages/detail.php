@@ -650,9 +650,8 @@ require_once __DIR__ . '/../components/navbar.php';
                 // Label status booking untuk ditampilkan ke user
                 $label_bk = [
                     'menunggu_pembayaran' => ['⏳','Booking dibuat, belum bayar','#92660a'],
-                    'dibayar'            => ['🔵','Menunggu verifikasi pemilik','#1d4ed8'],
                     'aktif'              => ['✅','Kamu sedang menghuni kos ini','#15803d'],
-                    'ditolak'            => ['❌','Pembayaran ditolak, perlu ulang','#b91c1c'],
+                    'ditolak'            => ['❌','Booking ditolak','#b91c1c'],
                     'selesai'            => ['🏁','Masa sewa telah selesai','#525252'],
                     'dibatalkan'         => ['🚫','Booking dibatalkan','#78716c'],
                 ];
@@ -685,7 +684,7 @@ require_once __DIR__ . '/../components/navbar.php';
                         </button>
                     <?php endif; ?>
 
-                <?php elseif (in_array($status_booking_user, ['menunggu_pembayaran','dibayar','aktif'])): ?>
+                <?php elseif (in_array($status_booking_user, ['menunggu_pembayaran','aktif'])): ?>
                     <!-- Sudah punya booking aktif -->
                     <?php [$bk_ico, $bk_msg, $bk_color] = $label_bk[$status_booking_user]; ?>
                     <div style="background:var(--color-bg);border:1.5px solid var(--color-border);border-radius:8px;padding:12px;text-align:center;margin-bottom:10px;">

@@ -12,8 +12,13 @@ config/midtrans.php
 .env
 
 # -------- File Upload oleh User --------
-# Foto/file yang diupload user saat runtime
-assets/uploads/
+# Foto kos yang diupload pemilik saat runtime
+assets/images/kos/*
+!assets/images/kos/.gitkeep
+
+# File upload lainnya
+assets/uploads/*
+!assets/uploads/.gitkeep
 
 # -------- Cache & Log --------
 *.log

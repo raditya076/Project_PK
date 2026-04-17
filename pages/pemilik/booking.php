@@ -23,7 +23,7 @@ $stmt = mysqli_prepare($koneksi,
      JOIN users u    ON b.penyewa_id = u.id
      WHERE k.pemilik_id = ?
      ORDER BY
-        FIELD(b.status, 'dibayar', 'menunggu_pembayaran', 'aktif', 'ditolak', 'selesai', 'dibatalkan'),
+        FIELD(b.status, 'menunggu_pembayaran', 'aktif', 'ditolak', 'selesai', 'dibatalkan'),
         b.created_at DESC"
 );
 mysqli_stmt_bind_param($stmt, 'i', $user['id']);

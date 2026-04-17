@@ -28,7 +28,6 @@ $kos_stat = mysqli_fetch_assoc($r);
 $r = mysqli_query($koneksi,
     "SELECT COUNT(*) AS total,
             SUM(status='menunggu_pembayaran') AS menunggu,
-            SUM(status='dibayar') AS dibayar,
             SUM(status='aktif') AS aktif,
             SUM(status='selesai') AS selesai,
             SUM(CASE WHEN status IN ('aktif','selesai') THEN total_harga ELSE 0 END) AS revenue
@@ -197,7 +196,6 @@ function rp(int $n): string { return 'Rp ' . number_format($n, 0, ',', '.'); }
                 <?php
                 $statuses = [
                     'menunggu_pembayaran' => ['label'=>'Menunggu Bayar', 'count'=>$booking_stat['menunggu'], 'color'=>'#92660a', 'bg'=>'#FFF9E6'],
-                    'dibayar'             => ['label'=>'Menunggu Konfirmasi', 'count'=>$booking_stat['dibayar'], 'color'=>'#1d4ed8', 'bg'=>'#EFF6FF'],
                     'aktif'               => ['label'=>'Aktif', 'count'=>$booking_stat['aktif'], 'color'=>'#15803d', 'bg'=>'#F0FFF4'],
                     'selesai'             => ['label'=>'Selesai', 'count'=>$booking_stat['selesai'], 'color'=>'#525252', 'bg'=>'#F5F5F5'],
                 ];

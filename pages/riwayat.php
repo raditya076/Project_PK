@@ -30,7 +30,7 @@ while ($row = mysqli_fetch_assoc($result)) $bookings[] = $row;
 $label_status = [
     'menunggu_pembayaran' => ['⏳', 'Menunggu Pembayaran', 'menunggu_pembayaran'],
     'aktif'               => ['✅', 'Aktif / Terkonfirmasi', 'aktif'],
-    'ditolak'             => ['❌', 'Pembayaran Ditolak',   'ditolak'],
+    'ditolak'             => ['❌', 'Booking Ditolak',      'ditolak'],
     'selesai'             => ['🏁', 'Masa Sewa Selesai',   'selesai'],
     'dibatalkan'          => ['🚫', 'Dibatalkan',           'dibatalkan'],
 ];
@@ -182,14 +182,6 @@ require_once __DIR__ . '/../components/navbar.php';
                     </form>
                 <?php endif; ?>
 
-                <!-- Booking ditolak: coba ulang dengan metode baru -->
-                <?php if ($b['status'] === 'ditolak'): ?>
-                    <a href="<?= BASE_URL ?>/pages/pembayaran.php?booking_id=<?= $b['id'] ?>"
-                       class="btn-action edit" style="font-size:12px;">
-                        🔄 Upload Ulang Bukti
-                    </a>
-                <?php endif; ?>
-
                 <!-- Booking aktif atau selesai: beri ulasan -->
                 <?php if (in_array($b['status'], ['aktif', 'selesai'])): ?>
                     <?php
@@ -210,14 +202,6 @@ require_once __DIR__ . '/../components/navbar.php';
                     <?php else: ?>
                         <span style="font-size:12px;color:#15803d;font-weight:600;">✅ Sudah diulas</span>
                     <?php endif; ?>
-                <?php endif; ?>
-
-                <!-- Lihat bukti bayar (jika sudah upload) -->
-                <?php if (!empty($b['bukti_pembayaran'])): ?>
-                    <a href="<?= BASE_URL ?>/assets/images/bukti_bayar/<?= htmlspecialchars($b['bukti_pembayaran']) ?>"
-                       target="_blank" class="btn-action" style="font-size:12px;">
-                        🖼️ Lihat Bukti
-                    </a>
                 <?php endif; ?>
 
             </div><!-- /riwayat-footer -->

@@ -1,0 +1,3 @@
+# Folder ini digunakan untuk menyimpan foto/file yang diupload oleh user.
+# Isi folder ini di-ignore oleh Git (lihat .gitignore).
+# File ini (.gitkeep) hanya ada agar folder ini tetap terlacak oleh Git.
