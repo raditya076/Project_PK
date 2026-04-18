@@ -1,23 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/callback_bayar.php
- * FUNGSI: Halaman finish callback dari Midtrans.
- *
- * Midtrans me-redirect browser user ke URL ini setelah
- * user menyelesaikan proses di Snap popup.
- *
- * Parameter GET yang dikirim Midtrans:
- *   - order_id           : KOSTA-{booking_id}-{timestamp}
- *   - status_code        : 200, 201, 202
- *   - transaction_status : settlement, pending, cancel, dll
- *   - signature_key      : untuk verifikasi keaslian
- *
- * PENTING: Halaman ini hanya untuk UX (tampilan ke user).
- * Update database dilakukan oleh notifikasi_midtrans.php (webhook).
- * Tapi kita tetap cek status via Midtrans API untuk keamanan.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/midtrans.php';

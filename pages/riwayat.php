@@ -1,11 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/riwayat.php
- * FUNGSI: Halaman riwayat booking untuk pencari/penyewa.
- *         Menampilkan semua booking + status + tombol aksi.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 

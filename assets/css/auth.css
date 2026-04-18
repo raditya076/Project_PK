@@ -1,9 +1,4 @@
-/* ====================================================
-   FILE: assets/css/auth.css
-   FUNGSI: CSS khusus halaman Login & Register
-   ==================================================== */
-
-/* Layout wrapper utama halaman auth */
+﻿/* Layout wrapper utama halaman auth */
 .auth-page {
     min-height: calc(100vh - 64px); /* Tinggi penuh dikurangi navbar */
     display: flex;

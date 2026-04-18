@@ -1,10 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/login.php
- * FUNGSI: Form login dengan session_start dan redirect role
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 
@@ -22,9 +17,7 @@ $email_input  = '';
 // Cek flash message dari session (misalnya dari redirect logout)
 $flash_html = get_flash();
 
-// -------------------------------------------------------
 // PROSES FORM LOGIN (hanya jika method POST)
-// -------------------------------------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $email_input = trim($_POST['email'] ?? '');

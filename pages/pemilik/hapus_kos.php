@@ -1,12 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pemilik/hapus_kos.php
- * FUNGSI: Menghapus data kos dari database.
- *         Hanya menerima POST request dari form.
- *         Verifikasi kepemilikan sebelum menghapus.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 

@@ -1,10 +1,4 @@
-/* ====================================================
-   FILE: assets/css/compare.css
-   FUNGSI: CSS halaman perbandingan kos (Mode Perbandingan)
-   ==================================================== */
-
-/* --- 1. TOOLBAR PERBANDINGAN (mengambang di bottom) --- */
-/*
+﻿/*
  * Ketika user memilih kos untuk dibandingkan,
  * toolbar kecil muncul di bagian bawah layar
  * mirip "keranjang belanja" yang mengambang.
@@ -119,7 +113,6 @@
 }
 .btn-compare-reset:hover { background: rgba(255,255,255,0.1); color: white; }
 
-/* --- 2. TABEL PERBANDINGAN --- */
 .compare-page-header {
     padding: 32px 0 24px;
 }
@@ -290,7 +283,6 @@
     background: var(--color-surface);
 }
 
-/* --- 3. EMPTY STATE PERBANDINGAN --- */
 .compare-empty {
     text-align: center;
     padding: 80px 20px;

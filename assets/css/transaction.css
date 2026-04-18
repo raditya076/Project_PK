@@ -1,13 +1,4 @@
-/* ====================================================
-   FILE: assets/css/transaction.css
-   FUNGSI: CSS untuk sistem booking, pembayaran, riwayat
-   ==================================================== */
-
-/* ─────────────────────────────────────────
-   1. BADGE STATUS BOOKING
-   Warna sesuai tahap transaksi
-   ───────────────────────────────────────── */
-.status-badge {
+﻿.status-badge {
     display: inline-flex;
     align-items: center;
     gap: 5px;
@@ -52,9 +43,6 @@
     border: 1px solid #D6D3D1;
 }
 
-/* ─────────────────────────────────────────
-   2. BOOKING FORM — halaman booking.php
-   ───────────────────────────────────────── */
 .booking-layout {
     display: grid;
     grid-template-columns: 1fr 340px;
@@ -142,9 +130,6 @@
 }
 .price-summary-label { color: var(--color-text-muted); }
 
-/* ─────────────────────────────────────────
-   3. SIDEBAR BOOKING — info kos ringkas
-   ───────────────────────────────────────── */
 .booking-kos-sidebar {
     background: var(--color-surface);
     border: 1.5px solid var(--color-border);
@@ -191,9 +176,6 @@
 .booking-kos-price { font-size: 17px; font-weight: 900; color: var(--color-accent); }
 .booking-kos-period { font-size: 12px; color: var(--color-text-muted); }
 
-/* ─────────────────────────────────────────
-   4. HALAMAN PEMBAYARAN
-   ───────────────────────────────────────── */
 .payment-layout {
     display: grid;
     grid-template-columns: 1fr 320px;
@@ -238,9 +220,6 @@
 }
 
 
-/* ─────────────────────────────────────────
-   5. RINGKASAN BOOKING (sidebar pembayaran)
-   ───────────────────────────────────────── */
 .booking-summary-card {
     background: var(--color-surface);
     border: 1.5px solid var(--color-border);
@@ -277,9 +256,6 @@
 }
 .summary-total .value { color: var(--color-accent); }
 
-/* ─────────────────────────────────────────
-   6. TABEL RIWAYAT BOOKING
-   ───────────────────────────────────────── */
 .riwayat-card {
     background: var(--color-surface);
     border: 1.5px solid var(--color-border);
@@ -322,9 +298,6 @@
     background: var(--color-bg);
 }
 
-/* -----------------------------------------
-   8. TOMBOL AKSI (btn-action)
-   ----------------------------------------- */
 .btn-action {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 7px 14px; border-radius: 6px;
@@ -341,9 +314,6 @@
 .btn-action.hapus { border-color:#FCA5A5; background:#FFF3F3; color:#b91c1c; }
 .btn-action.hapus:hover { background:#b91c1c; color:white; border-color:#b91c1c; }
 
-/* -----------------------------------------
-   9. FORM ELEMENTS
-   ----------------------------------------- */
 .form-group-kosta { margin-bottom: 20px; }
 .form-label-kosta {
     display: block; font-size: 12px; font-weight: 700;
@@ -362,9 +332,6 @@
 .form-textarea-kosta:focus { border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(197,0,0,0.08); }
 .form-textarea-kosta { resize: vertical; min-height: 90px; }
 
-/* -----------------------------------------
-   10. ALERT MESSAGES
-   ----------------------------------------- */
 .alert-kosta {
     padding: 12px 16px; border-radius: 8px;
     font-size: 13px; font-weight: 600;
@@ -376,9 +343,6 @@
 .alert-kosta.success { background:#F0FFF4; color:#15803d; border-left-color:#15803d; }
 .alert-kosta.info    { background:#EFF6FF; color:#1d4ed8; border-left-color:#1d4ed8; }
 
-/* -----------------------------------------
-   11. BREADCRUMB BAR
-   ----------------------------------------- */
 .breadcrumb-bar { background:var(--color-surface); border-bottom:1px solid var(--color-border); padding:10px 0; }
 .breadcrumb-bar .breadcrumb { font-size:12px; margin:0; }
 .breadcrumb-bar .breadcrumb-item a { color:var(--color-text-muted); font-weight:600; text-decoration:none; }

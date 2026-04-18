@@ -1,11 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pemilik/tambah_kos.php
- * FUNGSI: Form untuk menambahkan listing kos baru
- *         beserta logika upload foto.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -16,9 +10,7 @@ $user        = user_login();
 $pesan_error = '';
 $input       = []; // Menyimpan nilai input agar tidak hilang saat error
 
-// ============================================================
 // PROSES FORM (hanya jika POST)
-// ============================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Ambil semua input teks dari form
@@ -57,78 +49,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pesan_error = 'Alamat dan kota wajib diisi.';
     } else {
 
-        // ================================================================
-        // LOGIKA UPLOAD FOTO
-        // ================================================================
-        // $_FILES['foto_utama'] = array yang berisi info file yang diupload
-        // Strukturnya:
-        //   ['name']     = nama asli file dari komputer user
-        //   ['type']     = MIME type (misal: image/jpeg)
-        //   ['tmp_name'] = path file sementara di server (sebelum dipindahkan)
-        //   ['error']    = kode error (0 = tidak ada error)
-        //   ['size']     = ukuran file dalam bytes
-        // ================================================================
-        $nama_file_tersimpan = ''; // Default: kosong (tidak ada foto)
+        // PROSES UPLOAD MULTI-FOTO
+        // $_FILES['foto_kos'] memiliki struktur array saat input multiple:
+        //   ['name'][0]     = nama file pertama
+        //   ['tmp_name'][0] = path sementara file pertama
+        //   ['error'][0]    = kode error file pertama
+        //   ['size'][0]     = ukuran file pertama
+        // dst untuk [1], [2], ...
 
-        // Cek apakah ada file yang diupload (bukan upload kosong)
-        if (isset($_FILES['foto_utama']) && $_FILES['foto_utama']['error'] === UPLOAD_ERR_OK) {
+        $foto_berhasil_diupload = []; // Daftar nama file yang berhasil disimpan
+        $tipe_diizinkan = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        $map_mime_ke_ekstensi = [
+            'image/jpeg' => 'jpg', 'image/jpg' => 'jpg',
+            'image/png'  => 'png', 'image/webp' => 'webp',
+        ];
+        $ukuran_max    = 3 * 1024 * 1024; // 3MB per foto
+        $maks_foto     = 8;               // Maksimal 8 foto per kos
+        $folder_tujuan = __DIR__ . '/../../assets/images/kos/';
 
-            $file_tmp  = $_FILES['foto_utama']['tmp_name']; // Path file sementara
-            $file_name = $_FILES['foto_utama']['name'];     // Nama asli file
-            $file_size = $_FILES['foto_utama']['size'];     // Ukuran file (bytes)
-            $file_type = $_FILES['foto_utama']['type'];     // MIME type
+        if (!is_dir($folder_tujuan)) {
+            mkdir($folder_tujuan, 0755, true);
+        }
 
-            // Validasi 1: Hanya boleh gambar
-            // mime_content_type() lebih aman dari $_FILES['type'] karena
-            // tidak bergantung pada info dari browser (yang bisa dipalsukan)
-            $tipe_diizinkan = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-            $tipe_actual    = mime_content_type($file_tmp); // Cek tipe asli dari server
+        if (!empty($_FILES['foto_kos']['name'][0])) {
 
-            // Validasi 2: Ukuran maksimal 2MB (2 * 1024 * 1024 bytes)
-            $ukuran_max = 2 * 1024 * 1024; // 2MB
+            $total_file = count($_FILES['foto_kos']['name']);
 
-            if (!in_array($tipe_actual, $tipe_diizinkan)) {
-                $pesan_error = 'Format foto tidak valid. Gunakan JPG, PNG, atau WebP.';
-
-            } elseif ($file_size > $ukuran_max) {
-                $pesan_error = 'Ukuran foto terlalu besar. Maksimal 2MB.';
-
+            if ($total_file > $maks_foto) {
+                $pesan_error = 'Maksimal ' . $maks_foto . ' foto yang boleh diupload sekaligus.';
             } else {
-                // Buat nama file unik untuk menghindari file tertimpa
-                // uniqid() = string unik berdasarkan waktu
-                // pathinfo()['extension'] = ambil ekstensi dari nama file asli
-                $ekstensi  = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-                $nama_baru = 'kos_' . $user['id'] . '_' . uniqid() . '.' . $ekstensi;
+                // Loop setiap file yang dipilih user
+                for ($i = 0; $i < $total_file; $i++) {
 
-                // Path folder tujuan di server
-                // __DIR__ = folder saat ini (/pages/pemilik/)
-                // ../../assets/images/kos/ = naik 2 level ke root, lalu ke folder gambar
-                $folder_tujuan = __DIR__ . '/../../assets/images/kos/';
+                    // Lewati file yang error (misal: user memilih file kosong)
+                    if ($_FILES['foto_kos']['error'][$i] !== UPLOAD_ERR_OK) continue;
 
-                // Buat folder jika belum ada
-                if (!is_dir($folder_tujuan)) {
-                    mkdir($folder_tujuan, 0755, true); // true = buat parent folder juga
-                }
+                    $file_tmp  = $_FILES['foto_kos']['tmp_name'][$i];
+                    $file_size = $_FILES['foto_kos']['size'][$i];
 
-                $path_tujuan = $folder_tujuan . $nama_baru;
+                    // Validasi ukuran
+                    if ($file_size > $ukuran_max) {
+                        $pesan_error = 'Salah satu foto melebihi ukuran 3MB. Silakan compress terlebih dahulu.';
+                        break;
+                    }
 
-                // move_uploaded_file() = PINDAHKAN file dari folder tmp ke folder tujuan
-                // Ini lebih aman dari copy() karena khusus untuk file upload
-                // Return true jika berhasil, false jika gagal
-                if (move_uploaded_file($file_tmp, $path_tujuan)) {
-                    $nama_file_tersimpan = $nama_baru; // Simpan nama file ke database
-                } else {
-                    $pesan_error = 'Gagal menyimpan foto. Cek izin folder assets/images/kos/';
+                    // Validasi MIME type (dari isi file, bukan header browser)
+                    $mime = mime_content_type($file_tmp);
+                    if (!in_array($mime, $tipe_diizinkan)) {
+                        $pesan_error = 'Salah satu file bukan gambar yang valid (JPG/PNG/WebP).';
+                        break;
+                    }
+
+                    // Buat nama file unik dan aman
+                    $ekstensi  = $map_mime_ke_ekstensi[$mime] ?? 'jpg';
+                    $nama_baru = 'kos_' . $user['id'] . '_' . bin2hex(random_bytes(8)) . '.' . $ekstensi;
+
+                    if (move_uploaded_file($file_tmp, $folder_tujuan . $nama_baru)) {
+                        $foto_berhasil_diupload[] = $nama_baru;
+                    }
                 }
             }
         }
-        // Jika tidak ada foto atau foto gagal upload tapi tidak ada error lain,
-        // lanjutkan dan simpan dengan $nama_file_tersimpan = '' (placeholder akan dipakai)
 
-        // ============================================================
-        // SIMPAN KOS
-        // ============================================================
+        // SIMPAN KOS KE DATABASE
         if (empty($pesan_error)) {
+
+            // foto_utama = foto pertama yang diupload (jadi cover)
+            $foto_utama = !empty($foto_berhasil_diupload) ? $foto_berhasil_diupload[0] : '';
+
             $stmt = mysqli_prepare($koneksi,
                 "INSERT INTO kos (
                     pemilik_id, nama_kos, deskripsi, tipe,
@@ -146,7 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ?, ?, ?, 'aktif'
                 )"
             );
-
             mysqli_stmt_bind_param($stmt, 'isssssssiiiiiiiiiisdd',
                 $user['id'],
                 $input['nama_kos'],
@@ -166,12 +153,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $input['laundry'],
                 $input['security'],
                 $input['cctv'],
-                $nama_file_tersimpan,
+                $foto_utama,
                 $input['lat'],
                 $input['lng']
             );
 
             if (mysqli_stmt_execute($stmt)) {
+                $kos_id_baru = mysqli_insert_id($koneksi);
+
+                // Simpan semua foto ke tabel kos_foto
+                if (!empty($foto_berhasil_diupload)) {
+                    $ins_foto = mysqli_prepare($koneksi,
+                        "INSERT INTO kos_foto (kos_id, nama_file, urutan) VALUES (?, ?, ?)"
+                    );
+                    foreach ($foto_berhasil_diupload as $urutan => $nama_file) {
+                        mysqli_stmt_bind_param($ins_foto, 'isi', $kos_id_baru, $nama_file, $urutan);
+                        mysqli_stmt_execute($ins_foto);
+                    }
+                }
+
                 set_flash('sukses', 'Kos "' . $input['nama_kos'] . '" berhasil ditambahkan! 🎉');
                 redirect(BASE_URL . '/pages/pemilik/index.php');
             } else {
@@ -434,35 +434,43 @@ require_once __DIR__ . '/../../components/navbar.php';
 
                 </div><!-- /section 4 -->
 
-                <!-- BAGIAN 5: Upload Foto -->
+                <!-- BAGIAN 5: Upload Foto (Multi) -->
                 <div class="form-card-section">
-                    <p class="form-card-section-title">📸 Foto Utama Kos</p>
+                    <p class="form-card-section-title">📸 Foto Kos (Dokumentasi)</p>
+                    <p class="form-hint" style="margin-bottom:16px;">
+                        Upload hingga <strong>8 foto</strong> untuk memperlihatkan kondisi kos kepada calon penghuni.
+                        Format: JPG, PNG, WebP — Maks. <strong>3MB per foto</strong>.
+                        Foto pertama akan dijadikan <strong>foto cover</strong>.
+                    </p>
 
-                    <!-- Zone klik untuk upload foto -->
-                    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('foto_utama').click();">
+                    <!-- Zone klik / drag-drop -->
+                    <div class="upload-zone" id="upload-zone"
+                         onclick="document.getElementById('foto_kos').click();"
+                         ondragover="event.preventDefault();this.classList.add('drag-over');"
+                         ondragleave="this.classList.remove('drag-over');"
+                         ondrop="handleDrop(event)">
                         <div class="upload-icon">📷</div>
-                        <p class="upload-text">Klik untuk pilih foto</p>
-                        <p class="upload-hint">JPG, PNG, atau WebP — Maks. 2MB</p>
-                        <p class="upload-hint" style="margin-top:6px; color:var(--color-text-muted);">
-                            Jika tidak ada foto, icon placeholder akan digunakan.
-                        </p>
+                        <p class="upload-text">Klik atau seret foto ke sini</p>
+                        <p class="upload-hint">Pilih hingga 8 foto sekaligus</p>
                     </div>
 
-                    <!-- Input file tersembunyi di belakang upload zone -->
+                    <!-- Input file tersembunyi — multiple -->
                     <input type="file"
-                           id="foto_utama"
-                           name="foto_utama"
+                           id="foto_kos"
+                           name="foto_kos[]"
                            accept="image/jpeg,image/png,image/webp"
+                           multiple
                            style="display:none;">
 
-                    <!-- Preview foto yang dipilih -->
-                    <div id="foto-preview-wrapper" style="display:none; margin-top:14px;">
-                        <img id="foto-preview-img" src="" alt="Preview foto"
-                             style="max-width:100%; max-height:220px; object-fit:cover; border-radius:8px; border:1px solid var(--color-border);">
-                        <br>
-                        <button type="button" id="hapus-preview"
-                                style="margin-top:8px; font-size:12px; color:#b91c1c; background:none; border:none; cursor:pointer; font-weight:600;">
-                            ✕ Hapus foto yang dipilih
+                    <!-- Counter + grid preview -->
+                    <div id="preview-area" style="margin-top:14px;display:none;">
+                        <p style="font-size:12px;font-weight:700;color:var(--color-text-muted);margin-bottom:10px;">
+                            Preview (<span id="foto-count">0</span> foto dipilih — foto pertama jadi cover):
+                        </p>
+                        <div id="preview-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;"></div>
+                        <button type="button" onclick="clearFoto()"
+                                style="margin-top:10px;font-size:12px;color:#b91c1c;background:none;border:none;cursor:pointer;font-weight:600;">
+                            ✕ Hapus semua foto yang dipilih
                         </button>
                     </div>
 
@@ -491,46 +499,91 @@ require_once __DIR__ . '/../../components/navbar.php';
 
 <script>
 /**
- * Upload zone, foto preview, drag & drop
+ * Upload Multi-Foto — Preview grid thumbnail
+ * Mendukung klik & drag-drop
  */
-var inputFoto   = document.getElementById('foto_utama');
-var zone        = document.getElementById('upload-zone');
-var preview     = document.getElementById('foto-preview-wrapper');
-var previewImg  = document.getElementById('foto-preview-img');
-var hapusBtn    = document.getElementById('hapus-preview');
+var inputFoto  = document.getElementById('foto_kos');
+var zone       = document.getElementById('upload-zone');
+var previewArea = document.getElementById('preview-area');
+var previewGrid = document.getElementById('preview-grid');
+var fotoCount   = document.getElementById('foto-count');
+var MAKS_FOTO   = 8;
 
+// Tampilkan preview thumbnail untuk setiap file yang dipilih
 inputFoto.addEventListener('change', function() {
-    var file = this.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(e) {
-        previewImg.src = e.target.result;
-        preview.style.display = 'block';
-        zone.style.display    = 'none';
-    };
-    reader.readAsDataURL(file);
+    tampilkanPreview(this.files);
 });
 
-hapusBtn.addEventListener('click', function() {
-    inputFoto.value   = '';
-    previewImg.src    = '';
-    preview.style.display = 'none';
-    zone.style.display    = 'block';
-});
+function tampilkanPreview(files) {
+    previewGrid.innerHTML = '';
 
-zone.addEventListener('dragover',  function(e) { e.preventDefault(); this.classList.add('drag-over'); });
-zone.addEventListener('dragleave', function()   { this.classList.remove('drag-over'); });
-zone.addEventListener('drop', function(e) {
-    e.preventDefault();
-    this.classList.remove('drag-over');
-    var file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-        var dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        inputFoto.files = dataTransfer.files;
-        inputFoto.dispatchEvent(new Event('change'));
+    if (!files || files.length === 0) {
+        previewArea.style.display = 'none';
+        zone.style.display = 'block';
+        return;
     }
-});
+
+    var total = Math.min(files.length, MAKS_FOTO);
+    fotoCount.textContent = total;
+
+    for (var i = 0; i < total; i++) {
+        (function(file, idx) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var wrapper = document.createElement('div');
+                wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;border:2px solid ' + (idx === 0 ? 'var(--color-accent)' : 'var(--color-border)') + ';aspect-ratio:1;background:#f0ede8;';
+
+                var img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+
+                // Badge "Cover" untuk foto pertama
+                if (idx === 0) {
+                    var badge = document.createElement('div');
+                    badge.textContent = 'Cover';
+                    badge.style.cssText = 'position:absolute;top:4px;left:4px;background:var(--color-accent);color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;';
+                    wrapper.appendChild(badge);
+                }
+
+                wrapper.appendChild(img);
+                previewGrid.appendChild(wrapper);
+            };
+            reader.readAsDataURL(file);
+        })(files[i], i);
+    }
+
+    previewArea.style.display = 'block';
+    zone.style.display = 'none';
+}
+
+// Hapus semua pilihan foto
+function clearFoto() {
+    inputFoto.value = '';
+    previewGrid.innerHTML = '';
+    previewArea.style.display = 'none';
+    zone.style.display = 'block';
+}
+
+// Handle drag & drop
+function handleDrop(e) {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    var files = e.dataTransfer.files;
+    if (files.length > 0) {
+        // Pindahkan files ke input[type=file]
+        var dt = new DataTransfer();
+        for (var i = 0; i < Math.min(files.length, MAKS_FOTO); i++) {
+            if (files[i].type.startsWith('image/')) {
+                dt.items.add(files[i]);
+            }
+        }
+        inputFoto.files = dt.files;
+        tampilkanPreview(dt.files);
+    }
+}
 </script>
 
 <?php require_once __DIR__ . '/../../components/scripts.php'; ?>
+
+
+

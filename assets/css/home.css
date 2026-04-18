@@ -1,10 +1,4 @@
-/* ====================================================
-   FILE: assets/css/home.css
-   FUNGSI: CSS landing page dengan filter multi-kriteria
-   ==================================================== */
-
-/* --- 1. HERO SECTION --- */
-.hero-section {
+﻿.hero-section {
     background: linear-gradient(135deg, #1C1C1C 0%, #2d1f1f 60%, #3a1010 100%);
     padding: 80px 0 100px;
     position: relative;
@@ -58,7 +52,6 @@
     line-height: 1.7;
 }
 
-/* --- 2. SEARCH BOX MELAYANG --- */
 .search-floating-wrapper {
     margin-top: -36px;
     position: relative;
@@ -216,7 +209,6 @@
     color: white;
 }
 
-/* --- 3. SECTION LISTING KOS --- */
 .section-listing {
     padding: 56px 0 80px;
 }
@@ -248,7 +240,6 @@
 }
 .lihat-semua:hover { color: var(--color-accent-hover); }
 
-/* --- 4. KARTU KOS --- */
 .kos-card {
     background: var(--color-surface);
     border-radius: var(--radius-md);
@@ -416,7 +407,6 @@
 }
 /* Badge Tipe: lihat style.css global */
 
-/* --- 5. EMPTY STATE --- */
 .empty-state {
     text-align: center;
     padding: 80px 20px;
@@ -426,7 +416,6 @@
 .empty-state h5 { font-size: 16px; font-weight: 700; color: var(--color-text); margin-bottom: 6px; }
 .empty-state p  { font-size: 13px; margin: 0; }
 
-/* --- 6. RESPONSIVE --- */
 @media (max-width: 768px) {
     .hero-section { padding: 56px 0 80px; }
     .search-box { padding: 18px 18px; }

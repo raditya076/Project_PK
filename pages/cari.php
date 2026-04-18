@@ -1,10 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/cari.php
- * FUNGSI: Halaman pencarian & daftar semua kos
- * ====================================================
- */
+﻿<?php
+
 require_once '../config/koneksi.php';
 require_once '../config/session.php';
 

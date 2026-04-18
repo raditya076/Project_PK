@@ -1,16 +1,9 @@
-/* ====================================================
-   FILE: assets/css/admin.css
-   FUNGSI: CSS khusus panel admin Kosta'
-   ==================================================== */
-
-/* ─── LAYOUT ADMIN ─── */
-/* Navbar & footer tidak ditampilkan untuk admin (dihandle via PHP) */
+﻿/* Navbar & footer tidak ditampilkan untuk admin (dihandle via PHP) */
 .admin-wrapper {
     display: flex;
     min-height: 100vh; /* Navbar tidak ada → full height */
 }
 
-/* ─── SIDEBAR ─── */
 .admin-sidebar {
     width: 240px;
     flex-shrink: 0;
@@ -59,7 +52,6 @@
     margin: 12px 0;
 }
 
-/* ─── MAIN CONTENT ─── */
 .admin-main {
     flex: 1;
     min-width: 0;                    /* mencegah overflow tabel */
@@ -91,7 +83,6 @@
     margin-top: 4px;
 }
 
-/* ─── STAT CARDS ─── */
 .admin-stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -141,7 +132,6 @@
 .admin-stat-change.up   { color: #15803d; }
 .admin-stat-change.down { color: #b91c1c; }
 
-/* ─── ADMIN TABLE ─── */
 .admin-card {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -207,7 +197,6 @@
 .user-status.nonaktif { background: #F5F5F5; color: #737373; border: 1px solid #D4D4D4; }
 
 
-/* ─── SEARCH & FILTER BAR ─── */
 .admin-filter-bar {
     display: flex;
     gap: 10px;
@@ -238,7 +227,6 @@
     cursor: pointer;
 }
 
-/* ─── QUICK ACTION BUTTON ─── */
 .btn-admin {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 6px 14px; border-radius: 6px;
@@ -256,14 +244,12 @@
 .btn-admin.neutral { background: var(--color-surface); color: var(--color-text-muted); border-color: var(--color-border); }
 .btn-admin.neutral:hover { border-color: var(--color-accent); color: var(--color-accent); }
 
-/* ─── EMPTY STATE ─── */
 .admin-empty {
     text-align: center; padding: 48px 20px;
     color: var(--color-text-muted);
 }
 .admin-empty-icon { font-size: 48px; margin-bottom: 12px; opacity: 0.3; }
 
-/* ─── PAGINATION ─── */
 .admin-pagination {
     display: flex; gap: 4px; align-items: center;
     padding: 14px 20px; border-top: 1px solid var(--color-border);

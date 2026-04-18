@@ -1,14 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pemilik/index.php
- * FUNGSI: Dashboard utama untuk role 'Pemilik'.
- *         Menampilkan statistik dan daftar kos miliknya.
- *
- * PATH NOTE: File ini 2 level dalam (/pages/pemilik/)
- *            sehingga path ke config menggunakan ../../
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -18,9 +9,7 @@ wajib_role('pemilik');
 // Ambil data user yang sedang login
 $user = user_login();
 
-// -------------------------------------------------------
 // Query statistik untuk kartu di atas dashboard
-// -------------------------------------------------------
 
 // Total kos milik pemilik ini
 $q_total = mysqli_prepare($koneksi,
@@ -54,9 +43,7 @@ mysqli_stmt_bind_param($q_terisi, 'i', $user['id']);
 mysqli_stmt_execute($q_terisi);
 $kamar_terisi = mysqli_fetch_assoc(mysqli_stmt_get_result($q_terisi))['terisi'] ?? 0;
 
-// -------------------------------------------------------
 // Query daftar semua kos milik pemilik ini
-// -------------------------------------------------------
 $q_daftar = mysqli_prepare($koneksi,
     "SELECT * FROM kos WHERE pemilik_id = ? ORDER BY created_at DESC"
 );
@@ -64,13 +51,7 @@ mysqli_stmt_bind_param($q_daftar, 'i', $user['id']);
 mysqli_stmt_execute($q_daftar);
 $result_kos = mysqli_stmt_get_result($q_daftar);
 
-// Pesan baru (belum dibaca)
-$q_pesan = mysqli_prepare($koneksi,
-    "SELECT COUNT(*) as total FROM pesan WHERE pemilik_id = ? AND status = 'baru'"
-);
-mysqli_stmt_bind_param($q_pesan, 'i', $user['id']);
-mysqli_stmt_execute($q_pesan);
-$pesan_baru = mysqli_fetch_assoc(mysqli_stmt_get_result($q_pesan))['total'];
+
 
 $judul_halaman = "Dashboard Pemilik";
 $css_tambahan  = "dashboard.css";
@@ -81,7 +62,6 @@ require_once __DIR__ . '/../../components/navbar.php';
 
 <div class="dashboard-wrapper">
 
-    <!-- ===== SIDEBAR ===== -->
     <aside class="dashboard-sidebar">
         <!-- Profil singkat -->
         <div class="sidebar-profile">
@@ -107,10 +87,7 @@ require_once __DIR__ . '/../../components/navbar.php';
                class="sidebar-link">
                 <span class="link-icon">📋</span> Booking Masuk
             </a>
-            <a href="<?= BASE_URL ?>/pages/pemilik/pesan.php"
-               class="sidebar-link">
-                <span class="link-icon">📩</span> Pesan Masuk
-            </a>
+
             <a href="<?= BASE_URL ?>/pages/pemilik/rekening.php"
                class="sidebar-link">
                 <span class="link-icon">🏦</span> Rekening Bank
@@ -128,7 +105,6 @@ require_once __DIR__ . '/../../components/navbar.php';
         </nav>
     </aside>
 
-    <!-- ===== KONTEN UTAMA ===== -->
     <main class="dashboard-content">
 
         <!-- Header -->
@@ -176,15 +152,7 @@ require_once __DIR__ . '/../../components/navbar.php';
                     <div class="stat-card-label">Kamar Terisi</div>
                 </div>
             </div>
-            <a href="<?= BASE_URL ?>/pages/pemilik/pesan.php" class="stat-card" style="text-decoration:none;cursor:pointer;">
-                <div class="stat-card-icon" style="background:rgba(139,92,246,0.1);color:#7c3aed;">📩</div>
-                <div>
-                    <div class="stat-card-value" style="<?= $pesan_baru > 0 ? 'color:var(--color-accent);' : '' ?>">
-                        <?= $pesan_baru ?>
-                    </div>
-                    <div class="stat-card-label">Pesan Baru</div>
-                </div>
-            </a>
+
         </div>
 
         <!-- Tabel Daftar Kos -->

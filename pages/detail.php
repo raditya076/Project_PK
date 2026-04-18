@@ -1,15 +1,5 @@
 <?php
-/**
- * ====================================================
- * FILE: pages/detail.php  (FASE 4 — Peta + Compare + Pesan)
- * FUNGSI: Halaman detail kos lengkap dengan:
- *   - Peta Leaflet.js (OpenStreetMap, gratis, tanpa API Key)
- *   - Review & Rating
- *   - Tombol Bandingkan (mode perbandingan session)
- *   - Form Tanya Pemilik (pesan internal)
- *   - Tautan WhatsApp
- * ====================================================
- */
+// Halaman detail kos: galeri foto, peta, review, perbandingan, kontak WA
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 
@@ -41,9 +31,7 @@ if (!$kos) {
     require_once '../components/scripts.php'; exit;
 }
 
-// ============================================================
-// STATUS FAVORIT & PERBANDINGAN
-// ============================================================
+// Status favorit & perbandingan
 $sudah_favorit     = false;
 $kos_dibandingkan  = $_SESSION['bandingkan'] ?? [];
 $sudah_dibandingkan = in_array($id_kos, $kos_dibandingkan);
@@ -67,9 +55,7 @@ if (sudah_login()) {
 
 
 
-// ============================================================
-// REVIEW & RATING
-// ============================================================
+// Review & rating
 // Ambil statistik rating (rata-rata dan distribusi per bintang)
 $stmt_stat = mysqli_prepare($koneksi,
     "SELECT
@@ -110,13 +96,7 @@ if (sudah_login()) {
     $sudah_review = mysqli_stmt_num_rows($cek_rev) > 0;
 }
 
-// ============================================================
-// STATUS BOOKING USER DI KOS INI
-// Digunakan untuk menampilkan tombol yang tepat di sidebar:
-//   - Belum booking     → tampilkan "Pesan Sekarang"
-//   - Sudah booking     → tampilkan status + link riwayat
-//   - Booking selesai   → sudah tidak bisa booking lagi
-// ============================================================
+// Status booking user di kos ini (menentukan tombol yang tampil di sidebar)
 $status_booking_user = null;  // null = belum pernah booking
 $id_booking_user     = null;
 if (sudah_login() && user_login()['role'] === 'pencari') {
@@ -138,9 +118,27 @@ if (sudah_login() && user_login()['role'] === 'pencari') {
     }
 }
 
-// ============================================================
-// KOS TERKAIT
-// ============================================================
+// Foto galeri dari tabel kos_foto
+$foto_galeri = [];
+// Cek apakah tabel kos_foto sudah ada
+$cek_tbl = mysqli_query($koneksi, "SHOW TABLES LIKE 'kos_foto'");
+if (mysqli_num_rows($cek_tbl) > 0) {
+    $stmt_foto = mysqli_prepare($koneksi,
+        "SELECT nama_file FROM kos_foto WHERE kos_id = ? ORDER BY urutan ASC, id ASC"
+    );
+    mysqli_stmt_bind_param($stmt_foto, 'i', $id_kos);
+    mysqli_stmt_execute($stmt_foto);
+    $res_foto = mysqli_stmt_get_result($stmt_foto);
+    while ($f = mysqli_fetch_assoc($res_foto)) {
+        $foto_galeri[] = $f['nama_file'];
+    }
+}
+// Fallback: jika kos_foto kosong tapi foto_utama ada, gunakan itu
+if (empty($foto_galeri) && !empty($kos['foto_utama'])) {
+    $foto_galeri[] = $kos['foto_utama'];
+}
+
+// Kos terkait di kota yang sama
 $stmt_terkait = mysqli_prepare($koneksi,
     "SELECT id, nama_kos, tipe, harga_per_bulan, kota, foto_utama
      FROM kos WHERE kota=? AND id!=? AND status='aktif' ORDER BY RAND() LIMIT 3"
@@ -149,9 +147,7 @@ mysqli_stmt_bind_param($stmt_terkait, 'si', $kos['kota'], $id_kos);
 mysqli_stmt_execute($stmt_terkait);
 $result_terkait = mysqli_stmt_get_result($stmt_terkait);
 
-// ============================================================
-// PERSIAPAN VARIABEL
-// ============================================================
+// Persiapan variabel tampilan
 $kamar_tersedia = $kos['jumlah_kamar'] - $kos['kamar_terisi'];
 $harga_format   = 'Rp ' . number_format($kos['harga_per_bulan'], 0, ',', '.');
 $url_sekarang   = BASE_URL . '/pages/detail.php?id=' . $id_kos;
@@ -178,11 +174,7 @@ $wa_link  = !empty($kos['hp_pemilik'])
     ? "https://wa.me/62" . ltrim($kos['hp_pemilik'], '0') . "?text={$wa_pesan}"
     : '';
 
-// ============================================================
-// Leaflet CSS + extra_head support (slot di components/head.php)
-// Leaflet adalah library JavaScript untuk peta interaktif.
-// Ia gratis, open-source, dan TIDAK butuh API key apapun.
-// ============================================================
+// CSS tambahan: peta, perbandingan, review, transaksi
 $extra_head = '
     <link rel="stylesheet" href="' . BASE_URL . '/assets/css/maps.css">
     <link rel="stylesheet" href="' . BASE_URL . '/assets/css/compare.css">
@@ -214,25 +206,58 @@ require_once __DIR__ . '/../components/navbar.php';
 </div>
 
 
-<!-- ====== KONTEN DETAIL UTAMA ====== -->
+<!-- Konten detail utama -->
 <section class="detail-section-main">
 <div class="container">
 <div class="row g-4">
 
-    <!-- ===== KOLOM KIRI ===== -->
+    <!-- Kolom kiri -->
     <div class="col-lg-8">
 
-        <!-- FOTO UTAMA -->
-        <div class="detail-photo-wrapper">
-            <?php if (!empty($kos['foto_utama'])): ?>
-                <img src="<?= BASE_URL ?>/assets/images/kos/<?= htmlspecialchars($kos['foto_utama']) ?>"
-                     alt="Foto <?= htmlspecialchars($kos['nama_kos']) ?>">
+        <!-- Galeri foto (slideshow jika lebih dari 1 foto) -->
+        <div class="detail-photo-wrapper" style="position:relative;">
+            <?php if (!empty($foto_galeri)): ?>
+
+                <!-- Slideshow container -->
+                <div id="galeri-wrap" style="position:relative;overflow:hidden;border-radius:12px;">
+                    <?php foreach ($foto_galeri as $gi => $gfoto): ?>
+                        <img src="<?= BASE_URL ?>/assets/images/kos/<?= htmlspecialchars($gfoto) ?>"
+                             alt="Foto <?= htmlspecialchars($kos['nama_kos']) ?> <?= $gi+1 ?>"
+                             class="galeri-slide"
+                             style="width:100%;display:<?= $gi === 0 ? 'block' : 'none' ?>;max-height:420px;object-fit:contain;background:#1a1a1a;border-radius:12px;">
+                    <?php endforeach; ?>
+
+                    <?php if (count($foto_galeri) > 1): ?>
+                        <!-- Tombol prev/next -->
+                        <button onclick="galeriNav(-1)" class="galeri-btn galeri-prev" title="Sebelumnya">
+                            &#8249;
+                        </button>
+                        <button onclick="galeriNav(1)" class="galeri-btn galeri-next" title="Berikutnya">
+                            &#8250;
+                        </button>
+
+                        <!-- Counter foto: "2 / 5" -->
+                        <div class="galeri-counter" id="galeri-counter">
+                            1 / <?= count($foto_galeri) ?>
+                        </div>
+
+                        <!-- Dot navigasi -->
+                        <div class="galeri-dots">
+                            <?php foreach ($foto_galeri as $gi => $_): ?>
+                                <span class="galeri-dot <?= $gi === 0 ? 'aktif' : '' ?>"
+                                      onclick="galeriJump(<?= $gi ?>)"></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
             <?php else: ?>
                 <div class="detail-photo-placeholder">
                     <span style="font-size:72px;opacity:.3;">🏠</span>
                     <p style="margin-top:12px;font-size:14px;color:var(--color-text-muted);opacity:.6;">Foto belum tersedia</p>
                 </div>
             <?php endif; ?>
+
             <div class="photo-overlay-badge">
                 <span class="badge-kos <?= $kos['tipe'] ?>"><?= ucfirst($kos['tipe']) ?></span>
             </div>
@@ -286,7 +311,7 @@ require_once __DIR__ . '/../components/navbar.php';
                     </a>
                 <?php endif; ?>
 
-                <!-- ===== TOMBOL BANDINGKAN ===== -->
+                <!-- Tombol bandingkan -->
                 <?php if ($sudah_dibandingkan): ?>
                     <!-- Sudah ada di perbandingan: tampilkan opsi lihat/hapus -->
                     <a href="<?= BASE_URL ?>/pages/bandingkan/index.php" class="btn-action-detail"
@@ -342,18 +367,7 @@ require_once __DIR__ . '/../components/navbar.php';
                 </div>
             </div>
 
-            <!-- ===================================================
-                 PETA LEAFLET.JS
-                 ===================================================
-                 Leaflet adalah library JavaScript untuk membuat
-                 peta interaktif di browser.
-
-                 Cara kerjanya:
-                 1. Kita sediakan sebuah <div> kosong dengan ID
-                 2. Leaflet akan "mengisi" div itu dengan peta
-                 3. Peta diambil dari OpenStreetMap (gratis, tanpa API key)
-                 4. Kita pasang marker (pin) di koordinat kos
-                 =================================================== -->
+            <!-- Peta OpenStreetMap via iframe (gratis, tanpa API key) -->
             <div class="detail-block">
                 <h2 class="detail-block-title">📍 Lokasi di Peta</h2>
 
@@ -421,9 +435,7 @@ require_once __DIR__ . '/../components/navbar.php';
 
         </div><!-- /detail-info-card -->
 
-        <!-- =====================================================
-             SECTION REVIEW & RATING
-             ===================================================== -->
+        <!-- Section review & rating -->
         <div class="detail-info-card" id="ulasan" style="margin-top:24px;">
 
             <!-- Header: Judul + Statistik Ringkas -->
@@ -632,7 +644,7 @@ require_once __DIR__ . '/../components/navbar.php';
     </div><!-- /col-lg-8 -->
 
 
-    <!-- ===== KOLOM KANAN (sidebar) ===== -->
+    <!-- Kolom kanan (sidebar) -->
     <div class="col-lg-4">
         <div class="contact-sticky-wrapper">
 
@@ -733,20 +745,18 @@ require_once __DIR__ . '/../components/navbar.php';
                     </div>
                 </div>
 
-                <!-- WhatsApp (jika ada nomor) -->
-                <?php if (!empty($wa_link)): ?>
-                    <a href="<?= $wa_link ?>" target="_blank" rel="noopener" class="contact-btn whatsapp">
-                        <span>💬</span> Chat via WhatsApp
-                    </a>
+                <!-- Tanya Pemilik via WhatsApp (Fonnte) -->
+                <?php if (!empty($kos['hp_pemilik'])): ?>
+                    <button type="button" class="contact-btn whatsapp" id="btn-tanya-pemilik"
+                            onclick="bukaModalTanya()">
+                        <span>💬</span> Tanya Pemilik via WA
+                    </button>
+                <?php else: ?>
+                    <div style="font-size:12px;color:var(--color-text-muted);text-align:center;padding:8px 0;">
+                        ℹ️ Pemilik belum mendaftarkan nomor WhatsApp.
+                    </div>
                 <?php endif; ?>
 
-                <!-- Email -->
-                <?php if (!empty($kos['email_pemilik'])): ?>
-                    <a href="mailto:<?= htmlspecialchars($kos['email_pemilik']) ?>?subject=Tanya Kos: <?= urlencode($kos['nama_kos']) ?>"
-                       class="contact-btn email">
-                        <span>✉️</span> Kirim Email
-                    </a>
-                <?php endif; ?>
 
                 <!-- Favorit -->
                 <?php if (sudah_login()): ?>
@@ -764,65 +774,7 @@ require_once __DIR__ . '/../components/navbar.php';
                 </p>
             </div>
 
-            <!-- ====================================================
-                 FORM TANYA PEMILIK (Pesan Internal)
-                 Ini adalah alternatif jika user tidak pakai WA.
-                 Form ini mengirim POST ke pages/pesan/kirim.php
-                 ==================================================== -->
-            <div class="contact-card" style="margin-top:12px;">
-                <h3 class="contact-title" style="font-size:14px;">💬 Tanya Pemilik Langsung</h3>
 
-                <?php if (sudah_login()): $u = user_login(); ?>
-                    <!-- User login: nama & email sudah terisi otomatis -->
-                    <p style="font-size:12px;color:var(--color-text-muted);margin-bottom:14px;">
-                        Kirim sebagai <strong><?= htmlspecialchars($u['nama']) ?></strong>
-                    </p>
-                    <form action="<?= BASE_URL ?>/pages/pesan/kirim.php" method="POST">
-                        <input type="hidden" name="kos_id"       value="<?= $id_kos ?>">
-                        <input type="hidden" name="kembali"      value="<?= $url_sekarang ?>">
-                        <input type="hidden" name="nama_pengirim"  value="<?= htmlspecialchars($u['nama']) ?>">
-                        <input type="hidden" name="email_pengirim" value="<?= htmlspecialchars($u['email']) ?>">
-                        <div class="form-group-kosta" style="margin-bottom:10px;">
-                            <input type="tel" name="no_hp_pengirim" class="form-input-kosta"
-                                   placeholder="No. HP / WA (opsional)" style="font-size:13px;">
-                        </div>
-                        <div class="form-group-kosta" style="margin-bottom:10px;">
-                            <textarea name="isi_pesan" class="form-textarea-kosta"
-                                      style="min-height:90px;font-size:13px;"
-                                      placeholder="Tulis pertanyaanmu di sini...&#10;Contoh: Apakah masih ada kamar? Berapa DP-nya?" required></textarea>
-                        </div>
-                        <button type="submit" class="contact-btn whatsapp" style="background:var(--color-accent);border-color:var(--color-accent);">
-                            📩 Kirim Pesan
-                        </button>
-                    </form>
-                <?php else: ?>
-                    <!-- Belum login: tampilkan form lengkap -->
-                    <form action="<?= BASE_URL ?>/pages/pesan/kirim.php" method="POST">
-                        <input type="hidden" name="kos_id"  value="<?= $id_kos ?>">
-                        <input type="hidden" name="kembali" value="<?= $url_sekarang ?>">
-                        <div class="form-group-kosta" style="margin-bottom:10px;">
-                            <input type="text" name="nama_pengirim" class="form-input-kosta"
-                                   placeholder="Nama kamu" required style="font-size:13px;">
-                        </div>
-                        <div class="form-group-kosta" style="margin-bottom:10px;">
-                            <input type="email" name="email_pengirim" class="form-input-kosta"
-                                   placeholder="Email kamu" required style="font-size:13px;">
-                        </div>
-                        <div class="form-group-kosta" style="margin-bottom:10px;">
-                            <input type="tel" name="no_hp_pengirim" class="form-input-kosta"
-                                   placeholder="No. HP / WA (opsional)" style="font-size:13px;">
-                        </div>
-                        <div class="form-group-kosta" style="margin-bottom:10px;">
-                            <textarea name="isi_pesan" class="form-textarea-kosta"
-                                      style="min-height:90px;font-size:13px;"
-                                      placeholder="Pertanyaan untuk pemilik..." required></textarea>
-                        </div>
-                        <button type="submit" class="contact-btn whatsapp" style="background:var(--color-accent);border-color:var(--color-accent);">
-                            📩 Kirim Pesan
-                        </button>
-                    </form>
-                <?php endif; ?>
-            </div><!-- /form pesan -->
 
             <a href="javascript:history.back()"
                style="display:block;text-align:center;font-size:13px;font-weight:600;color:var(--color-text-muted);margin-top:16px;">
@@ -839,10 +791,7 @@ require_once __DIR__ . '/../components/navbar.php';
 </section>
 
 
-<!-- ====================================================
-     FLOATING TOOLBAR PERBANDINGAN
-     Muncul dari bawah ketika ada kos di session bandingkan
-     ==================================================== -->
+<!-- Floating toolbar perbandingan (muncul jika ada kos di sesi bandingkan) -->
 <?php if (!empty($kos_dibandingkan)): ?>
 <div class="compare-toolbar <?= count($kos_dibandingkan) > 0 ? 'tampil' : '' ?>" id="compare-toolbar">
     <div class="container compare-toolbar-inner">
@@ -881,7 +830,112 @@ require_once __DIR__ . '/../components/navbar.php';
 
 <?php require_once __DIR__ . '/../components/footer.php'; ?>
 
+<style>
+/* Galeri slideshow */
+.galeri-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,.45);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: background .2s;
+}
+.galeri-btn:hover { background: rgba(0,0,0,.7); }
+.galeri-prev { left: 10px; }
+.galeri-next { right: 10px; }
+
+.galeri-counter {
+    position: absolute;
+    bottom: 44px;
+    right: 12px;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    z-index: 5;
+}
+
+.galeri-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+}
+.galeri-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.5);
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+.galeri-dot.aktif {
+    background: #fff;
+    transform: scale(1.3);
+}
+</style>
+
 <script>
+/* Galeri slideshow */
+(function() {
+    var slides  = document.querySelectorAll('.galeri-slide');
+    var dots    = document.querySelectorAll('.galeri-dot');
+    var counter = document.getElementById('galeri-counter');
+    var current = 0;
+    var total   = slides.length;
+
+    if (total <= 1) return; // Satu foto — tidak perlu navigasi
+
+    function tampilSlide(idx) {
+        slides[current].style.display = 'none';
+        dots[current].classList.remove('aktif');
+
+        current = (idx + total) % total;
+
+        slides[current].style.display = 'block';
+        dots[current].classList.add('aktif');
+        if (counter) counter.textContent = (current + 1) + ' / ' + total;
+    }
+
+    // Dipanggil dari tombol prev/next (onclick di HTML)
+    window.galeriNav  = function(dir)  { tampilSlide(current + dir); };
+    window.galeriJump = function(idx)  { tampilSlide(idx); };
+
+    // Keyboard navigasi (← →)
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft')  galeriNav(-1);
+        if (e.key === 'ArrowRight') galeriNav(1);
+    });
+
+    // Swipe touch (mobile)
+    var startX = 0;
+    var wrap = document.getElementById('galeri-wrap');
+    if (wrap) {
+        wrap.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; }, {passive:true});
+        wrap.addEventListener('touchend',   function(e) {
+            var diff = startX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 40) galeriNav(diff > 0 ? 1 : -1);
+        });
+    }
+})();
+
+/* Fungsi share link */
 function shareKos() {
     var btn = document.getElementById('btn-share');
     if (navigator.clipboard) {
@@ -896,6 +950,258 @@ function shareKos() {
 }
 </script>
 
+<!-- Modal tanya pemilik via WhatsApp (Fonnte) -->
+<?php if (!empty($kos['hp_pemilik'])): ?>
+<div id="modal-tanya" role="dialog" aria-modal="true" aria-label="Tanya Pemilik"
+     style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;">
+    <div style="background:var(--color-surface,#1e1e2e);border:1px solid var(--color-border,#2e2e3e);border-radius:16px;width:100%;max-width:480px;box-shadow:0 24px 60px rgba(0,0,0,.45);overflow:hidden;">
 
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid var(--color-border,#2e2e3e);">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#25d366,#128c5e);display:flex;align-items:center;justify-content:center;font-size:18px;">💬</div>
+                <div>
+                    <div style="font-size:15px;font-weight:800;color:var(--color-text,#f0f0f0);">Tanya Pemilik Kos</div>
+                    <div style="font-size:12px;color:var(--color-text-muted,#9999aa);"><?= htmlspecialchars($kos['nama_pemilik']) ?> · via WhatsApp</div>
+                </div>
+            </div>
+            <button onclick="tutupModalTanya()" title="Tutup"
+                    style="background:none;border:none;color:var(--color-text-muted,#9999aa);font-size:22px;cursor:pointer;line-height:1;padding:4px;">✕</button>
+        </div>
+
+        <!-- Body form -->
+        <div style="padding:20px;">
+
+            <!-- Template pesan cepat -->
+            <div style="margin-bottom:14px;">
+                <div style="font-size:11px;font-weight:700;color:var(--color-text-muted,#9999aa);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">
+                    💡 Pilih template atau tulis sendiri
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:7px;">
+                    <?php
+                    $nama_kos_tpl = htmlspecialchars($kos['nama_kos'], ENT_QUOTES);
+                    $templates = [
+                        ['🏠', 'Ketersediaan Kamar',
+                         "Halo, saya tertarik dengan kos *{$nama_kos_tpl}*. Apakah masih ada kamar yang tersedia? Jika ada, kapan bisa saya mulai huni?"],
+                        ['💰', 'Harga & Biaya',
+                         "Halo, selain harga sewa bulanan, apakah ada biaya tambahan lain seperti listrik, air, atau biaya kebersihan di *{$nama_kos_tpl}*?"],
+                        ['🔑', 'Jadwal Survei',
+                         "Halo, saya ingin melakukan survei langsung ke *{$nama_kos_tpl}*. Kapan waktu yang bisa kita atur untuk kunjungan?"],
+                        ['📋', 'Syarat & Ketentuan',
+                         "Halo, apa saja syarat dan ketentuan untuk menyewa kamar di *{$nama_kos_tpl}*? Apakah ada deposit atau kontrak minimum?"],
+                        ['🚗', 'Fasilitas & Parkir',
+                         "Halo, apakah di *{$nama_kos_tpl}* tersedia parkir kendaraan (motor/mobil)? Dan bagaimana dengan fasilitas lainnya?"],
+                    ];
+                    foreach ($templates as [$ikon, $judul, $isi]):
+                        $isi_escaped = htmlspecialchars($isi, ENT_QUOTES);
+                    ?>
+                    <button type="button"
+                            class="tpl-chip"
+                            onclick="pakaiTemplate(this)"
+                            data-tpl="<?= $isi_escaped ?>"
+                            title="<?= htmlspecialchars($isi, ENT_QUOTES) ?>">
+                        <?= $ikon ?> <?= $judul ?>
+                    </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <label style="display:block;font-size:12px;font-weight:700;color:var(--color-text-muted,#9999aa);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">✏️ Pesan *</label>
+            <textarea id="tanya-pesan"
+                      placeholder="Pilih template di atas atau ketik pesanmu sendiri..."
+                      rows="5"
+                      maxlength="500"
+                      style="width:100%;box-sizing:border-box;background:var(--color-bg,#13131f);border:1.5px solid var(--color-border,#2e2e3e);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--color-text,#f0f0f0);resize:vertical;outline:none;transition:border-color .2s;font-family:inherit;"
+                      onfocus="this.style.borderColor='#25d366'"
+                      onblur="this.style.borderColor=''"
+                      oninput="updateCharCount()"></textarea>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+                <span id="tanya-char-count" style="font-size:11px;color:var(--color-text-muted,#9999aa);">0 / 500</span>
+                <span style="font-size:11px;color:var(--color-text-muted,#9999aa);">📲 Dikirim ke WA pemilik</span>
+            </div>
+
+            <!-- Alert area -->
+            <div id="tanya-alert" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+
+            <!-- Action buttons -->
+            <div style="display:flex;gap:10px;margin-top:16px;">
+                <button onclick="tutupModalTanya()"
+                        style="flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--color-border,#2e2e3e);background:none;color:var(--color-text-muted,#9999aa);font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;"
+                        onmouseover="this.style.background='rgba(255,255,255,.05)'"
+                        onmouseout="this.style.background='none'">Batal</button>
+                <button id="btn-kirim-tanya"
+                        onclick="kirimPesanFonnte()"
+                        style="flex:2;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#25d366,#128c5e);color:#fff;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;">
+                    <span id="kirim-icon">📨</span>
+                    <span id="kirim-label">Kirim Pesan</span>
+                </button>
+            </div>
+
+            <?php if (!sudah_login()): ?>
+            <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--color-text-muted,#9999aa);">
+                ⚠️ Kamu harus <a href="<?= BASE_URL ?>/pages/login.php" style="color:#25d366;font-weight:700;">login</a> untuk mengirim pesan.
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Template chip buttons */
+.tpl-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--color-border, #2e2e3e);
+    background: var(--color-bg, #13131f);
+    color: var(--color-text-muted, #9999aa);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s ease;
+    white-space: nowrap;
+    font-family: inherit;
+}
+.tpl-chip:hover {
+    border-color: #25d366;
+    color: #25d366;
+    background: rgba(37, 211, 102, .08);
+}
+.tpl-chip.aktif {
+    border-color: #25d366;
+    background: rgba(37, 211, 102, .15);
+    color: #25d366;
+}
+</style>
+
+<script>
+(function() {
+    var KOS_ID     = <?= $id_kos ?>;
+    var HANDLER    = '<?= BASE_URL ?>/pages/kirim_wa_fonnte.php';
+    var SUDAH_LOGIN = <?= sudah_login() ? 'true' : 'false' ?>;
+
+    // Template chip: isi textarea dan tandai chip aktif
+    window.pakaiTemplate = function(btn) {
+        var teks = btn.getAttribute('data-tpl');
+        var area = document.getElementById('tanya-pesan');
+        area.value = teks;
+        updateCharCount();
+        area.focus();
+        // Highlight chip yang dipilih
+        document.querySelectorAll('.tpl-chip').forEach(function(c) {
+            c.classList.remove('aktif');
+        });
+        btn.classList.add('aktif');
+        // Scroll ke textarea
+        area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+
+    window.bukaModalTanya = function() {
+        var modal = document.getElementById('modal-tanya');
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.getElementById('tanya-pesan').focus();
+        resetFormTanya();
+    };
+
+    window.tutupModalTanya = function() {
+        document.getElementById('modal-tanya').style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    // Tutup saat klik backdrop
+    document.getElementById('modal-tanya').addEventListener('click', function(e) {
+        if (e.target === this) tutupModalTanya();
+    });
+
+    // Tutup dengan Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') tutupModalTanya();
+    });
+
+    window.updateCharCount = function() {
+        var len = document.getElementById('tanya-pesan').value.length;
+        var el  = document.getElementById('tanya-char-count');
+        el.textContent = len + ' / 500';
+        el.style.color = len > 450 ? '#ef4444' : '';
+    };
+
+    function tampilAlert(tipe, pesan) {
+        var el = document.getElementById('tanya-alert');
+        el.style.display = 'block';
+        if (tipe === 'sukses') {
+            el.style.background  = 'rgba(37,211,102,.12)';
+            el.style.border      = '1px solid rgba(37,211,102,.35)';
+            el.style.color       = '#25d366';
+        } else {
+            el.style.background  = 'rgba(239,68,68,.12)';
+            el.style.border      = '1px solid rgba(239,68,68,.35)';
+            el.style.color       = '#ef4444';
+        }
+        el.textContent = pesan;
+    }
+
+    function resetFormTanya() {
+        document.getElementById('tanya-pesan').value = '';
+        document.getElementById('tanya-alert').style.display = 'none';
+        document.getElementById('tanya-char-count').textContent = '0 / 500';
+        setBtnKirim(false);
+    }
+
+    function setBtnKirim(loading) {
+        var btn   = document.getElementById('btn-kirim-tanya');
+        var icon  = document.getElementById('kirim-icon');
+        var label = document.getElementById('kirim-label');
+        btn.disabled       = loading;
+        btn.style.opacity  = loading ? '.65' : '1';
+        icon.textContent   = loading ? '⏳' : '📨';
+        label.textContent  = loading ? 'Mengirim...' : 'Kirim Pesan';
+    }
+
+    window.kirimPesanFonnte = function() {
+        if (!SUDAH_LOGIN) {
+            tampilAlert('error', '⚠️ Kamu harus login terlebih dahulu.');
+            return;
+        }
+
+        var pesan = document.getElementById('tanya-pesan').value.trim();
+        if (pesan.length < 5) {
+            tampilAlert('error', '⚠️ Pesan terlalu pendek. Minimal 5 karakter.');
+            return;
+        }
+
+        setBtnKirim(true);
+        document.getElementById('tanya-alert').style.display = 'none';
+
+        var formData = new FormData();
+        formData.append('kos_id', KOS_ID);
+        formData.append('pesan',  pesan);
+
+        fetch(HANDLER, { method: 'POST', body: formData })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                setBtnKirim(false);
+                if (data.success) {
+                    tampilAlert('sukses', '✅ ' + data.message);
+                    document.getElementById('tanya-pesan').value = '';
+                    document.getElementById('tanya-char-count').textContent = '0 / 500';
+                    // Tutup modal otomatis setelah 2.5 detik
+                    setTimeout(tutupModalTanya, 2500);
+                } else {
+                    tampilAlert('error', '❌ ' + data.message);
+                }
+            })
+            .catch(function() {
+                setBtnKirim(false);
+                tampilAlert('error', '❌ Terjadi kesalahan jaringan. Silakan coba lagi.');
+            });
+    };
+})();
+</script>
+<?php endif; ?>
 
 <?php require_once __DIR__ . '/../components/scripts.php'; ?>
+
+

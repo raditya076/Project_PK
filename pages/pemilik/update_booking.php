@@ -1,27 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pemilik/update_booking.php
- * FUNGSI: Handler aksi pemilik terhadap booking.
- *
- * AKSI YANG TERSEDIA:
- *   selesai → status: aktif → selesai  (masa sewa berakhir)
- *
- * CATATAN:
- * Pembayaran dikonfirmasi OTOMATIS oleh Midtrans.
- * Pemilik tidak perlu verifikasi pembayaran.
- * Uang masuk ke Midtrans platform, admin yang disbursement.
- *
- * STATE MACHINE:
- * ┌─────────────────────────────────────────┐
- * │  menunggu_pembayaran                    │
- * │         ↓ (Midtrans settlement)         │
- * │       aktif  ← otomatis saat bayar     │
- * │         ↓ (pemilik tandai selesai)      │
- * │       selesai                           │
- * └─────────────────────────────────────────┘
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -59,26 +37,22 @@ if (!$booking) {
     redirect(BASE_URL . '/pages/pemilik/booking.php');
 }
 
-// ============================================================
 // LOGIKA UPDATE STATUS BERDASARKAN AKSI
 //
 // Setiap aksi hanya valid dari status tertentu.
 // Ini disebut "State Machine" — mesin status.
 // Kita tidak bisa skip status (misal: langsung ke 'selesai'
 // dari 'menunggu_pembayaran'). Ini menjaga integritas data.
-// ============================================================
 
 $pesan_sukses = '';
 $updated      = false;
 
 if ($aksi === 'selesai') {
-    // -------------------------------------------------------
     // TANDAI SELESAI: aktif → selesai
     //
     // Masa sewa sudah berakhir.
     // Setelah ini, kamar_terisi berkurang 1 (kamar bebas lagi).
     // Penyewa bisa memberi ulasan setelah status ini.
-    // -------------------------------------------------------
     if ($booking['status'] !== 'aktif') {
         set_flash('error', 'Hanya booking berstatus "Aktif" yang bisa ditandai selesai.');
         redirect(BASE_URL . '/pages/pemilik/booking.php');

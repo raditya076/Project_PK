@@ -1,11 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/bandingkan/hapus.php
- * FUNGSI: Hapus satu kos dari daftar perbandingan,
- *         atau kosongkan semua (reset).
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 

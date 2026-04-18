@@ -1,13 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: components/scripts.php
- * FUNGSI: Komponen penutup halaman.
- * Berisi: Bootstrap JS, script custom, penutup </body></html>
- *
- * Selalu include file ini di BAWAH setiap halaman (sebelum akhir file).
- * ====================================================
- */
+﻿<?php
+
 ?>
 
     <!-- Bootstrap 5 JS Bundle (termasuk Popper.js untuk dropdown, modal, tooltip) -->
@@ -40,10 +32,6 @@
     }
     </script>
 
-    <!-- ============================================================
-         CUSTOM CONFIRM DIALOG — Menggantikan browser native confirm()
-         Berlaku global di semua halaman via scripts.php
-         ============================================================ -->
     <div id="kosta-confirm-overlay" aria-modal="true" role="dialog" aria-labelledby="kosta-confirm-title">
         <div id="kosta-confirm-box">
             <div id="kosta-confirm-icon">&#9888;&#65039;</div>
@@ -164,11 +152,9 @@
 
     <script>
     (function () {
-        /* ── State ── */
         var _cb         = null;   /* Callback aktif */
         var _keyHandler = null;   /* Escape handler */
 
-        /* ── Referensi elemen ── */
         var overlay, iconEl, titleEl, msgEl, btnOk, btnCan;
 
         function getEls() {
@@ -180,7 +166,6 @@
             btnCan  = document.getElementById('kosta-btn-cancel');
         }
 
-        /* ── Tutup dialog ── */
         function closeDialog(confirmed) {
             if (!overlay) return;
             overlay.classList.remove('kosta-show');
@@ -193,7 +178,6 @@
             if (confirmed && cb) cb();
         }
 
-        /* ── Pasang event listener SEKALI setelah DOM siap ── */
         document.addEventListener('DOMContentLoaded', function () {
             getEls();
 
@@ -203,7 +187,6 @@
                 if (e.target === overlay) closeDialog(false);
             });
 
-            /* ── Auto-intercept form onsubmit="return confirm(...)" ── */
             document.querySelectorAll('form[onsubmit]').forEach(function (form) {
                 var attr  = form.getAttribute('onsubmit') || '';
                 var m     = attr.match(/return\s+confirm\((['"])(.+?)\1\)/);
@@ -219,7 +202,6 @@
                 });
             });
 
-            /* ── Auto-intercept onclick="return confirm(...)" ── */
             document.querySelectorAll('[onclick]').forEach(function (el) {
                 var attr = el.getAttribute('onclick') || '';
                 var m    = attr.match(/return\s+confirm\((['"])(.+?)\1\)/);
@@ -242,7 +224,6 @@
             });
         });
 
-        /* ── API Global ── */
         /**
          * window.kostaConfirm(msg, callback, opts?)
          *

@@ -1,16 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/booking/batalkan.php
- * FUNGSI: Membatalkan booking.
- *
- * UPDATE STATUS:
- *   SEBELUM: 'menunggu_pembayaran'
- *   SESUDAH: 'dibatalkan'
- *
- * Hanya bisa dibatalkan jika belum ada pembayaran.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 

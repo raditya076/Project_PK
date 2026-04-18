@@ -1,17 +1,5 @@
 ﻿<?php
-/**
- * ====================================================
- * FILE: config/session.php
- * FUNGSI: Manajemen session terpusat untuk seluruh aplikasi.
- *
- * Session adalah cara PHP "mengingat" siapa yang sedang login.
- * Bayangkan session seperti gelang tamu di sebuah hotel —
- * selama gelang masih dipakai, hotel tahu kamu sudah check-in.
- *
- * Cara pakai: require_once di bagian PALING ATAS setiap file
- * yang butuh , SEBELUM output HTML apapun.
- * ==================autentikasi==================================
- */
+
 
 // Konfigurasikan session agar lebih aman sebelum memulainya
 // ini harus dipanggil SEBELUM session_start()
@@ -28,9 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 
-// ============================================================
 // FUNGSI-FUNGSI HELPER AUTENTIKASI
-// ============================================================
 
 /**
  * Cek apakah pengguna sudah login.
@@ -108,12 +94,10 @@ function redirect(string $url): void {
 }
 
 
-// ============================================================
 // SISTEM FLASH MESSAGE
 // Flash message = pesan sementara yang ditampilkan SEKALI
 // (misalnya: "Login berhasil!" setelah redirect dari login)
 // Setelah dibaca, pesan langsung dihapus dari session.
-// ============================================================
 
 /**
  * Simpan flash message ke session.

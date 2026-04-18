@@ -1,17 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: components/navbar.php
- * FUNGSI: Navbar responsif dengan dropdown profil user.
- *
- * PENTING (Struktur Bootstrap 5):
- *   - Menu navigasi (.navbar-nav) ada DALAM .collapse
- *     → ikut sembunyi/tampil saat hamburger diklik
- *   - Tombol profil (.dropdown) ada DI LUAR .collapse
- *     → SELALU tampil di semua ukuran layar
- *   - Ini mencegah bug dropdown tidak bisa diklik
- * ====================================================
- */
+﻿<?php
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -56,7 +44,6 @@ if ($user_login && in_array($user_login['role'], ['admin', 'pemilik'])) {
         <!-- Wrapper kanan: profil + hamburger (SELALU tampil) -->
         <div class="d-flex align-items-center gap-2 ms-auto">
 
-            <!-- ===== DROPDOWN PROFIL (di luar collapse) ===== -->
             <?php if ($user_login): ?>
                 <div class="dropdown">
                     <button class="navbar-user-btn dropdown-toggle"

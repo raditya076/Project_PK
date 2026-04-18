@@ -1,10 +1,5 @@
 ﻿<?php
-/**
- * ====================================================
- * FILE: pages/favorit/index.php
- * FUNGSI: Halaman daftar kos yang difavoritkan user.
- * ====================================================
- */
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 

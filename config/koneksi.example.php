@@ -1,14 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: config/koneksi.example.php
- * INSTRUKSI:
- * 1. Salin file ini menjadi: config/koneksi.php
- * 2. Isi nilai sesuai konfigurasi lokal kamu
- * 3. File koneksi.php sudah di-ignore oleh Git
- *    (tidak akan ter-upload ke GitHub)
- * ====================================================
- */
+﻿<?php
+
 
 // --- Konfigurasi Database ---
 define('DB_HOST', 'localhost');   // Server database

@@ -1,23 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/notifikasi_midtrans.php
- * FUNGSI: Webhook Handler — menerima notifikasi dari
- *         Midtrans saat status pembayaran berubah.
- *         Ditulis dengan PHP murni tanpa library eksternal.
- *
- * CARA DAFTARKAN:
- *   Midtrans Dashboard → Settings → Configuration
- *   → Payment Notification URL:
- *     https://yourdomain.com/Project1/pages/notifikasi_midtrans.php
- *
- * UNTUK TESTING LOKAL:
- *   Gunakan ngrok: ngrok http 80
- *   Lalu daftarkan URL ngrok ke dashboard Midtrans.
- *
- * PENTING: File ini TIDAK boleh require session/login!
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/midtrans.php';
 

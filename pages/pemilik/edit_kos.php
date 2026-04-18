@@ -1,11 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pemilik/edit_kos.php
- * FUNGSI: Form edit kos yang sudah ada.
- *         Hanya pemilik kos tersebut yang boleh akses.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -31,9 +25,7 @@ if (!$kos) {
 $errors = [];
 $input  = $kos; // Pre-fill form dengan data yang ada
 
-// ============================================================
 // PROSES UPDATE (jika form di-submit)
-// ============================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Kumpulkan semua input
     $input['nama_kos']          = trim($_POST['nama_kos']          ?? '');
@@ -79,8 +71,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (empty($errors)) {
-            $ext            = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $nama_foto_baru = 'kos_' . $id_kos . '_' . time() . '.' . strtolower($ext);
+            // ⚠️ KEAMANAN: Ekstensi dari MIME type (bukan nama file user)
+            $map_mime_ke_ekstensi = [
+                'image/jpeg' => 'jpg',
+                'image/jpg'  => 'jpg',
+                'image/png'  => 'png',
+                'image/webp' => 'webp',
+            ];
+            $ekstensi       = $map_mime_ke_ekstensi[$mime] ?? 'jpg';
+            $nama_foto_baru = 'kos_' . $id_kos . '_' . bin2hex(random_bytes(8)) . '.' . $ekstensi;
             $tujuan         = __DIR__ . '/../../assets/images/kos/' . $nama_foto_baru;
             if (!move_uploaded_file($file['tmp_name'], $tujuan)) {
                 $errors[] = 'Gagal menyimpan foto baru.';
@@ -166,9 +165,7 @@ require_once __DIR__ . '/../../components/navbar.php';
             <a href="<?= BASE_URL ?>/pages/pemilik/tambah_kos.php" class="sidebar-link">
                 <span class="link-icon">➕</span> Tambah Kos
             </a>
-            <a href="<?= BASE_URL ?>/pages/pemilik/pesan.php" class="sidebar-link">
-                <span class="link-icon">📩</span> Pesan Masuk
-            </a>
+
 
         </nav>
         <p class="sidebar-menu-label">Akun</p>

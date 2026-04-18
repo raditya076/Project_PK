@@ -1,14 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/bandingkan/index.php
- * FUNGSI: Halaman perbandingan — menampilkan 2-3 kos
- *         dalam tabel side-by-side.
- *
- * Data kos diambil dari $_SESSION['bandingkan']
- * yang berisi array ID kos yang dipilih user.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 

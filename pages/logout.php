@@ -1,16 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/logout.php
- * FUNGSI: Menghancurkan session dan logout pengguna.
- *
- * Cara kerja logout:
- * 1. Kosongkan array $_SESSION
- * 2. Hapus cookie session dari browser
- * 3. Hancurkan data session di server
- * 4. Redirect ke halaman login
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 

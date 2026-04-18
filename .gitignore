@@ -9,6 +9,7 @@
 # JANGAN pernah di-upload ke GitHub!
 config/koneksi.php
 config/midtrans.php
+config/fonnte.php
 .env
 
 # -------- File Upload oleh User --------

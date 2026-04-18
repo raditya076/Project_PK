@@ -1,16 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/bandingkan/tambah.php
- * FUNGSI: Tambah kos ke daftar perbandingan di session.
- *
- * SESSION COMPARISON:
- * $_SESSION['bandingkan'] adalah array berisi ID kos
- * yang dipilih user. Maksimal 3 kos sekaligus.
- *
- * Setelah ditambah, user diredirect kembali ke halaman asal.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 

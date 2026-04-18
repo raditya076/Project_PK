@@ -1,14 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pembayaran.php
- * FUNGSI: Halaman pembayaran — bayar menggunakan Midtrans.
- *
- * ALUR:
- *   Status SEBELUM: 'menunggu_pembayaran'
- *   Status SESUDAH: 'aktif' (dikonfirmasi otomatis oleh Midtrans)
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/midtrans.php';
@@ -72,7 +63,6 @@ require_once __DIR__ . '/../components/navbar.php';
 <div class="container">
 <div class="payment-layout">
 
-    <!-- ===== KOLOM KIRI: Pembayaran Midtrans ===== -->
     <div>
 
         <!-- TOMBOL BAYAR MIDTRANS -->
@@ -122,7 +112,6 @@ require_once __DIR__ . '/../components/navbar.php';
     </div><!-- /kolom kiri -->
 
 
-    <!-- ===== KOLOM KANAN: Ringkasan Booking ===== -->
     <div>
         <div class="booking-summary-card">
             <div class="booking-summary-title">📋 Ringkasan Booking</div>

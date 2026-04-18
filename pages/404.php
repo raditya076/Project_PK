@@ -1,10 +1,5 @@
 ﻿<?php
-/**
- * ====================================================
- * FILE: pages/404.php
- * FUNGSI: Halaman error 404 kustom dengan desain Kosta'.
- * ====================================================
- */
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 

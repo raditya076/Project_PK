@@ -1,16 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/booking.php
- * FUNGSI: Form booking kos oleh pencari / penyewa.
- *
- * ALUR:
- *   GET  → Tampilkan form (pilih durasi, tanggal masuk)
- *   POST → Simpan booking ke DB, redirect ke pembayaran
- *
- * HANYA user dengan role 'pencari' yang bisa booking.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 
@@ -70,9 +59,7 @@ $input  = [
     'catatan'       => '',
 ];
 
-// ============================================================
 // PROSES POST: Simpan booking baru
-// ============================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input['durasi_bulan']  = (int)($_POST['durasi_bulan']  ?? 1);
     $input['tanggal_masuk'] = trim($_POST['tanggal_masuk']  ?? '');
@@ -158,7 +145,6 @@ require_once __DIR__ . '/../components/navbar.php';
 <div class="container">
 <div class="booking-layout">
 
-    <!-- ===== KOLOM KIRI: Form Booking ===== -->
     <div>
         <div class="booking-form-card">
             <h1 class="booking-form-title">📋 Formulir Booking Kos</h1>
@@ -269,7 +255,6 @@ require_once __DIR__ . '/../components/navbar.php';
         </div>
     </div>
 
-    <!-- ===== KOLOM KANAN: Info Kos ===== -->
     <div>
         <div class="booking-kos-sidebar">
             <?php if (!empty($kos['foto_utama'])): ?>
@@ -320,11 +305,9 @@ require_once __DIR__ . '/../components/navbar.php';
 <?php require_once __DIR__ . '/../components/footer.php'; ?>
 
 <script>
-// ============================================================
 // HITUNG HARGA & TANGGAL KELUAR SECARA REAL-TIME
 // Ini adalah JavaScript yang berjalan di browser (sisi client).
 // Ia menghitung dan menampilkan estimasi SEBELUM form di-submit.
-// ============================================================
 var HARGA_PER_BULAN = <?= $kos['harga_per_bulan'] ?>;   // dari PHP ke JS
 
 function hitungHarga(durasi) {

@@ -1,15 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/dashboard.php
- * FUNGSI: Router dashboard — mengarahkan user ke
- *         halaman dashboard yang sesuai role-nya.
- *
- * Analoginya: ini seperti resepsionis hotel.
- * Ketika tamu datang, resepsionis melihat kartu tamu
- * dan mengantar ke lantai yang benar.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 

@@ -1,10 +1,4 @@
-/* ====================================================
-   FILE: assets/css/review.css
-   FUNGSI: CSS untuk sistem review & rating bintang
-   ==================================================== */
-
-/* --- 1. KARTU REVIEW --- */
-.review-section-header {
+﻿.review-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -112,7 +106,6 @@
     line-height: 1.7;
 }
 
-/* --- 2. FORM TULIS REVIEW --- */
 .write-review-card {
     background: var(--color-surface);
     border: 1.5px solid var(--color-border);
@@ -171,7 +164,6 @@
 .review-login-prompt a { color: var(--color-accent); font-weight: 700; }
 
 
-/* --- 4. RESPONSIVE --- */
 @media (max-width: 576px) {
     .review-summary { flex-direction: column; gap: 12px; }
     .review-avg-score { font-size: 40px; }

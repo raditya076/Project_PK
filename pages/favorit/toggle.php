@@ -1,18 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/favorit/toggle.php
- * FUNGSI: Toggle kos masuk/keluar dari daftar favorit.
- *
- * LOGIKA TOGGLE:
- * 1. Cek apakah kos sudah ada di tabel favorites
- * 2. Jika sudah ada  → HAPUS (un-favorite)
- * 3. Jika belum ada  → TAMBAH (favorite)
- *
- * Teknik: INSERT IGNORE + DELETE
- * Atau: cek dulu dengan SELECT, baru INSERT atau DELETE
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -45,10 +32,8 @@ if (mysqli_stmt_num_rows($cek_kos) === 0) {
     redirect($kembali);
 }
 
-// ============================================================
 // LOGIKA TOGGLE:
 // Cek apakah sudah ada di tabel favorites
-// ============================================================
 $cek_fav = mysqli_prepare($koneksi,
     "SELECT id FROM favorites WHERE user_id = ? AND kos_id = ? LIMIT 1"
 );

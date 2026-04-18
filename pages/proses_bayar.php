@@ -1,16 +1,6 @@
-<?php
+﻿<?php
 ob_start(); // Tangkap semua output tidak diinginkan (PHP notices, warnings, dll)
-/**
- * ====================================================
- * FILE: pages/proses_bayar.php
- * FUNGSI: Meminta Snap Token ke Midtrans via cURL murni
- *         (tanpa library eksternal).
- *
- * DIPANGGIL via: AJAX POST dari pembayaran.php
- * RETURN JSON: { snap_token: "...", order_id: "..." }
- *              atau { error: "pesan error" }
- * ====================================================
- */
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 require_once __DIR__ . '/../config/midtrans.php';

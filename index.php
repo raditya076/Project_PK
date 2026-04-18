@@ -1,19 +1,11 @@
-<?php
-/**
- * ====================================================
- * FILE: index.php
- * FUNGSI: Landing page dengan pencarian multi-filter,
- *         grid kos dari database, tombol favorit.
- * ====================================================
- */
+﻿<?php
+
 require_once 'config/koneksi.php';
 require_once 'config/session.php';
 
-// ============================================================
 // LANGKAH 1: Ambil semua parameter filter dari URL ($_GET)
 // Menggunakan GET agar URL bisa di-bookmark dan di-bagikan
 // Contoh URL: ?q=margonda&tipe=putri&harga_max=1500000&wifi=1
-// ============================================================
 $keyword    = trim($_GET['q']         ?? '');
 $tipe       = trim($_GET['tipe']      ?? '');
 $kota       = trim($_GET['kota']      ?? '');
@@ -32,9 +24,7 @@ $ada_filter = !empty($keyword) || !empty($tipe) || !empty($kota)
            || $harga_min > 0 || $harga_max > 0
            || $filter_wifi || $filter_ac || $filter_km_dlm || $filter_parkir;
 
-// ============================================================
 // LANGKAH 2: Bangun Query SQL secara Dinamis
-// ============================================================
 // Mulai dengan query dasar — ambil kos + info pemilik (JOIN)
 $sql = "SELECT k.*, u.nama AS nama_pemilik
         FROM kos k
@@ -104,10 +94,8 @@ $sql .= " ORDER BY $urutan_sql LIMIT 9";
 $result     = mysqli_query($koneksi, $sql);
 $jumlah_kos = mysqli_num_rows($result);
 
-// ============================================================
 // LANGKAH 3: Ambil ID kos yang sudah difavoritkan user
 //            (hanya jika user sudah login)
-// ============================================================
 // Kita simpan dalam array agar pengecekan O(1) — sangat cepat
 $set_favorit = []; // format: [kos_id => true, ...]
 
@@ -124,9 +112,7 @@ if (sudah_login()) {
     }
 }
 
-// ============================================================
 // LANGKAH 4: Ambil daftar kota untuk dropdown filter
-// ============================================================
 $result_kota = mysqli_query($koneksi,
     "SELECT DISTINCT kota FROM kos WHERE status='aktif' ORDER BY kota ASC"
 );
@@ -135,9 +121,7 @@ while ($r = mysqli_fetch_assoc($result_kota)) {
     $daftar_kota[] = $r['kota'];
 }
 
-// ============================================================
 // LANGKAH 5: Siapkan variabel head & render
-// ============================================================
 $judul_halaman = "Beranda";
 $css_tambahan  = "home.css";
 
@@ -145,7 +129,6 @@ require_once 'components/head.php';
 require_once 'components/navbar.php';
 ?>
 
-<!-- ===== HERO SECTION ===== -->
 <section class="hero-section">
     <div class="container" style="position:relative; z-index:2;">
         <div class="row align-items-center">
@@ -165,7 +148,6 @@ require_once 'components/navbar.php';
 </section>
 
 
-<!-- ===== SEARCH BOX MENGAMBANG ===== -->
 <div class="search-floating-wrapper">
     <div class="container">
         <form action="<?= BASE_URL ?>/index.php" method="GET" id="form-filter">
@@ -272,7 +254,6 @@ require_once 'components/navbar.php';
 </div>
 
 
-<!-- ===== SECTION LISTING KOS ===== -->
 <section class="section-listing">
     <div class="container">
 
@@ -295,7 +276,6 @@ require_once 'components/navbar.php';
             </a>
         </div>
 
-        <!-- ========== GRID KOS ========== -->
         <?php if ($jumlah_kos > 0): ?>
             <div class="row g-4">
 
@@ -327,7 +307,6 @@ require_once 'components/navbar.php';
                             <span class="kos-ribbon">Baru</span>
                         <?php endif; ?>
 
-                        <!-- ===== TOMBOL FAVORIT (WISHLIST HEART) ===== -->
                         <?php if (sudah_login()): ?>
                             <!--
                                 Jika sudah login: kirim POST ke toggle.php
@@ -356,7 +335,6 @@ require_once 'components/navbar.php';
                                 🤍
                             </a>
                         <?php endif; ?>
-                        <!-- ===== END TOMBOL FAVORIT ===== -->
 
                     </div><!-- /kos-card-img-wrapper -->
 

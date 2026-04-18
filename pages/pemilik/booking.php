@@ -1,12 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/pemilik/booking.php
- * FUNGSI: Dashboard pemilik — tampilkan daftar booking
- *         yang masuk ke kos mereka + tombol aksi
- *         (konfirmasi / tolak / tandai selesai).
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -114,9 +107,7 @@ require_once __DIR__ . '/../../components/navbar.php';
                     </span>
                 <?php endif; ?>
             </a>
-            <a href="<?= BASE_URL ?>/pages/pemilik/pesan.php" class="sidebar-link">
-                <span class="link-icon">📩</span> Pesan Masuk
-            </a>
+
 
         </nav>
         <p class="sidebar-menu-label">Akun</p>

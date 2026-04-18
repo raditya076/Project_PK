@@ -1,11 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/register.php  (FASE 2 — dengan session)
- * FUNGSI: Pendaftaran akun baru dengan password_hash,
- *         pemisahan role, dan auto-login setelah daftar.
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
 
@@ -53,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (mysqli_stmt_num_rows($stmt_cek) > 0) {
             $pesan_error = 'Email ini sudah terdaftar. Gunakan email lain atau masuk.';
         } else {
-            // -----------------------------------------------
             // HASH PASSWORD — ini langkah keamanan krusial!
             //
             // password_hash() mengubah password menjadi string
@@ -65,7 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             //
             // Perbandingan password dilakukan dengan
             // password_verify($input, $hash) — bukan ==
-            // -----------------------------------------------
             $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
             // Simpan user baru ke database

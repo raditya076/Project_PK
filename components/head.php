@@ -1,20 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: components/head.php
- * FUNGSI: Komponen <head> HTML yang digunakan di semua halaman.
- * Berisi: meta tags, link CSS Bootstrap, link CSS custom.
- *
- * Cara pakai di halaman:
- *   $judul_halaman = "Beranda";
- *   $css_tambahan  = "home.css"; // (opsional)
- *   require_once 'components/head.php';
- *
- * Variabel yang bisa diatur sebelum include:
- *   $judul_halaman  (string) - Judul tab browser
- *   $css_tambahan   (string) - Nama file CSS halaman spesifik (opsional)
- * ====================================================
- */
+﻿<?php
+
 
 // Nilai default jika $judul_halaman tidak diset
 if (!isset($judul_halaman)) {

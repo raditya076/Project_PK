@@ -1,12 +1,5 @@
-<?php
-/**
- * ====================================================
- * FILE: pages/review/kirim.php
- * FUNGSI: Simpan review & rating dari penghuni ke kos.
- *         Satu user hanya bisa review satu kos SATU KALI
- *         (dijaga oleh UNIQUE KEY di database).
- * ====================================================
- */
+﻿<?php
+
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
 
@@ -48,7 +41,6 @@ if (mysqli_stmt_num_rows($cek) === 0) {
     redirect($kembali);
 }
 
-// ============================================================
 // GATE: Hanya penyewa dengan booking SELESAI yang bisa review
 //
 // Ini mencegah ulasan palsu dari orang yang tidak pernah
@@ -56,7 +48,6 @@ if (mysqli_stmt_num_rows($cek) === 0) {
 //
 // Jika tabel bookings belum ada (sebelum eksekusi SQL),
 // cek ini akan dilewati agar tidak merusak fungsionalitas.
-// ============================================================
 $tabel_ada = mysqli_query($koneksi, "SHOW TABLES LIKE 'bookings'");
 if (mysqli_num_rows($tabel_ada) > 0) {
     // Izinkan review jika booking berstatus 'aktif' ATAU 'selesai'.
