@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['aksi'])) {
     $id_dana    = (int)($_POST['id_dana'] ?? 0);
     $aksi       = trim($_POST['aksi'] ?? '');
     $catatan    = trim($_POST['catatan'] ?? '');
-    $valid_aksi = ['diproses', 'selesai'];
+    $valid_aksi = ['selesai'];
 
     if ($id_dana > 0 && in_array($aksi, $valid_aksi)) {
         $upd = mysqli_prepare($koneksi,
@@ -113,13 +113,7 @@ function rp_fmt($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
                     <div class="admin-stat-change down" style="font-size:11px;"><?= rp_fmt($stat['uang_pending']) ?></div>
                 </div>
             </div>
-            <div class="admin-stat-card">
-                <div class="admin-stat-icon blue">🔄</div>
-                <div>
-                    <div class="admin-stat-value"><?= $stat['jml_diproses'] ?></div>
-                    <div class="admin-stat-label">Sedang Diproses</div>
-                </div>
-            </div>
+
             <div class="admin-stat-card">
                 <div class="admin-stat-icon green">✅</div>
                 <div>
@@ -140,7 +134,7 @@ function rp_fmt($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
         <!-- Filter Tab -->
         <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
             <?php
-            $tabs = ['' => 'Semua', 'pending' => '⏳ Pending', 'diproses' => '🔄 Diproses', 'selesai' => '✅ Selesai'];
+            $tabs = ['' => 'Semua', 'pending' => '⏳ Pending', 'selesai' => '✅ Selesai'];
             foreach ($tabs as $val => $lbl):
                 $aktif = ($filter_status === $val) ? 'primary' : 'neutral';
             ?>
@@ -237,17 +231,8 @@ function rp_fmt($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
 
                             <!-- Aksi -->
                             <td>
-                                <?php if ($d['status_disbursement'] === 'pending'): ?>
-                                    <button onclick="bukaModal(<?= $d['id'] ?>, 'diproses')"
-                                            class="btn-admin neutral" style="font-size:12px;margin-bottom:4px;width:100%;">
-                                        🔄 Tandai Diproses
-                                    </button>
-                                    <button onclick="bukaModal(<?= $d['id'] ?>, 'selesai')"
-                                            class="btn-admin primary" style="font-size:12px;width:100%;">
-                                        ✅ Tandai Selesai
-                                    </button>
-                                <?php elseif ($d['status_disbursement'] === 'diproses'): ?>
-                                    <button onclick="bukaModal(<?= $d['id'] ?>, 'selesai')"
+                                <?php if ($d['status_disbursement'] !== 'selesai'): ?>
+                                    <button onclick="bukaModal(<?= $d['id'] ?>)"
                                             class="btn-admin primary" style="font-size:12px;width:100%;">
                                         ✅ Tandai Selesai
                                     </button>
@@ -295,23 +280,14 @@ function rp_fmt($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
 <?php require_once __DIR__ . '/../../components/scripts.php'; ?>
 
 <script>
-function bukaModal(id, aksi) {
+function bukaModal(id) {
     document.getElementById('modal-id').value   = id;
-    document.getElementById('modal-aksi').value = aksi;
+    document.getElementById('modal-aksi').value = 'selesai';
     document.getElementById('modal-catatan').value = '';
-
-    if (aksi === 'selesai') {
-        document.getElementById('modal-judul').textContent = '✅ Tandai Dana Selesai Ditransfer';
-        document.getElementById('modal-desc').textContent  = 'Pastikan kamu sudah mentransfer dana ke rekening pemilik. Tindakan ini tidak bisa dibatalkan.';
-        document.getElementById('modal-submit').textContent = 'Ya, Sudah Ditransfer';
-    } else {
-        document.getElementById('modal-judul').textContent = '🔄 Tandai Sedang Diproses';
-        document.getElementById('modal-desc').textContent  = 'Tandai bahwa proses transfer sedang berjalan.';
-        document.getElementById('modal-submit').textContent = 'Tandai Diproses';
-    }
-
-    var m = document.getElementById('modal-disb');
-    m.style.display = 'flex';
+    document.getElementById('modal-judul').textContent  = '✅ Tandai Dana Selesai Ditransfer';
+    document.getElementById('modal-desc').textContent   = 'Pastikan kamu sudah mentransfer dana ke rekening pemilik. Tindakan ini tidak bisa dibatalkan.';
+    document.getElementById('modal-submit').textContent = 'Ya, Sudah Ditransfer';
+    document.getElementById('modal-disb').style.display = 'flex';
 }
 function tutupModal() {
     document.getElementById('modal-disb').style.display = 'none';

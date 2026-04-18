@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once __DIR__ . '/../config/koneksi.php';
 require_once __DIR__ . '/../config/session.php';
@@ -83,6 +83,52 @@ if ($booking && ($transaction_status === 'settlement' || $transaction_status ===
             mysqli_stmt_execute($upd_kamar);
 
             mysqli_commit($koneksi);
+
+            // Insert pembagian_dana jika belum ada (fallback: webhook tidak terpanggil di localhost)
+            $cek_pd = mysqli_prepare($koneksi,
+                "SELECT id FROM pembagian_dana WHERE booking_id = ? LIMIT 1"
+            );
+            mysqli_stmt_bind_param($cek_pd, 'i', $booking['id']);
+            mysqli_stmt_execute($cek_pd);
+            $sudah_ada_pd = mysqli_fetch_assoc(mysqli_stmt_get_result($cek_pd));
+
+            if (!$sudah_ada_pd) {
+                $total_transaksi = (float) $booking['total_harga'];
+                $persen_platform = (float) PLATFORM_FEE_PERCENT;
+                $biaya_platform  = round($total_transaksi * $persen_platform / 100, 2);
+                $biaya_gateway   = 0.00;
+                $jatah_pemilik   = round($total_transaksi - $biaya_platform - $biaya_gateway, 2);
+                $catatan_pd      = "Order: {$order_id} | Metode: {$transaction_status} (via callback)";
+
+                // Ambil pemilik_id dari kos
+                $stmt_pemilik = mysqli_prepare($koneksi,
+                    "SELECT pemilik_id FROM kos WHERE id = ? LIMIT 1"
+                );
+                mysqli_stmt_bind_param($stmt_pemilik, 'i', $booking['kos_id']);
+                mysqli_stmt_execute($stmt_pemilik);
+                $kos_row = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt_pemilik));
+
+                if ($kos_row) {
+                    $ins_pd = mysqli_prepare($koneksi,
+                        "INSERT INTO pembagian_dana
+                         (booking_id, pemilik_id, total_transaksi, persen_platform,
+                          biaya_platform, biaya_gateway, jatah_pemilik, status_disbursement, catatan)
+                         VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)"
+                    );
+                    mysqli_stmt_bind_param($ins_pd, 'iiddddds',
+                        $booking['id'],
+                        $kos_row['pemilik_id'],
+                        $total_transaksi,
+                        $persen_platform,
+                        $biaya_platform,
+                        $biaya_gateway,
+                        $jatah_pemilik,
+                        $catatan_pd
+                    );
+                    mysqli_stmt_execute($ins_pd);
+                }
+            }
+
         } catch (Exception $e) {
             mysqli_rollback($koneksi);
         }
