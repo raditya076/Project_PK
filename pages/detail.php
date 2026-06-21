@@ -205,6 +205,21 @@ require_once __DIR__ . '/../components/navbar.php';
     </div>
 </div>
 
+<?php if ($kos['kamar_terisi'] >= $kos['jumlah_kamar']): ?>
+<!-- Banner peringatan kos penuh -->
+<div class="container" style="padding-top:16px;">
+    <div style="background:linear-gradient(135deg,#fef2f2,#fff1f2);border:1.5px solid #fecaca;border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="font-size:32px;line-height:1;">🚫</div>
+        <div style="flex:1;min-width:200px;">
+            <div style="font-size:15px;font-weight:800;color:#991b1b;margin-bottom:4px;">Maaf, kos ini sudah penuh.</div>
+            <div style="font-size:13px;color:#b91c1c;">Silakan cari kos lain yang tersedia.</div>
+        </div>
+        <a href="<?= BASE_URL ?>/pages/cari.php" class="btn-kosta btn" style="font-size:13px;padding:10px 20px;white-space:nowrap;">
+            🔍 Cari Kos Lain
+        </a>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Konten detail utama -->
 <section class="detail-section-main">

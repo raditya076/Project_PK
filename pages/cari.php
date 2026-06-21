@@ -14,7 +14,8 @@ $order = trim($_GET['order'] ?? 'terbaru');
 $sql = "SELECT k.*, u.nama AS nama_pemilik
         FROM kos k
         LEFT JOIN users u ON k.pemilik_id = u.id
-        WHERE k.status = 'aktif'";
+        WHERE k.status = 'aktif'
+        AND k.kamar_terisi < k.jumlah_kamar";
 
 // Array kondisi filter (lebih rapi dari string concatenation)
 $kondisi = [];
