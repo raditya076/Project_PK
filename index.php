@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once 'config/koneksi.php';
 require_once 'config/session.php';
@@ -29,7 +29,8 @@ $ada_filter = !empty($keyword) || !empty($tipe) || !empty($kota)
 $sql = "SELECT k.*, u.nama AS nama_pemilik
         FROM kos k
         LEFT JOIN users u ON k.pemilik_id = u.id
-        WHERE k.status = 'aktif'";
+        WHERE k.status = 'aktif'
+        AND k.kamar_terisi < k.jumlah_kamar";
 
 // Array kondisi WHERE tambahan
 // Dikumpulkan dulu, baru digabung dengan implode(" AND ", ...)
