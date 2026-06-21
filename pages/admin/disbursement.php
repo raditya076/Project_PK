@@ -86,6 +86,42 @@ $stat = mysqli_fetch_assoc($r_stat);
 $judul_halaman = "Disbursement — Admin";
 $css_tambahan  = "admin.css";
 $body_class    = "admin-page";
+$extra_head    = '
+<style>
+/* ── Disbursement Status Badges ─────────────────────── */
+.disb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+.disb-badge.pending  { background:#FFF9E6; color:#92660a;  border: 1.5px solid #f59e0b; }
+.disb-badge.diproses { background:#EFF6FF; color:#1d4ed8;  border: 1.5px solid #93c5fd; }
+.disb-badge.selesai  { background:#F0FFF4; color:#15803d;  border: 1.5px solid #86efac; }
+.disb-date  { font-size: 11px; color: var(--color-text-muted); margin-top: 5px; }
+
+/* ── Disbursement Filter Tabs ────────────────────────── */
+.disb-tab-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.disb-tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 18px; border-radius: 8px;
+    font-size: 13px; font-weight: 700;
+    text-decoration: none; cursor: pointer;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    transition: all 0.2s;
+}
+.disb-tab:hover  { border-color: var(--color-accent); color: var(--color-accent); }
+.disb-tab.active { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+.disb-tab.active.selesai { background: #15803d; border-color: #15803d; }
+</style>
+';
 require_once __DIR__ . '/../../components/head.php';
 require_once __DIR__ . '/../../components/navbar.php';
 
@@ -132,14 +168,20 @@ function rp_fmt($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
         </div>
 
         <!-- Filter Tab -->
-        <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+        <div class="disb-tab-bar">
             <?php
-            $tabs = ['' => 'Semua', 'pending' => '⏳ Pending', 'selesai' => '✅ Selesai'];
-            foreach ($tabs as $val => $lbl):
-                $aktif = ($filter_status === $val) ? 'primary' : 'neutral';
+            $tabs = [
+                ''         => ['label' => 'Semua',    'icon' => '📋', 'cls' => ''],
+                'pending'  => ['label' => 'Pending',  'icon' => '⏳', 'cls' => ''],
+                'selesai'  => ['label' => 'Selesai',  'icon' => '✅', 'cls' => 'selesai'],
+            ];
+            foreach ($tabs as $val => $tab):
+                $aktif = ($filter_status === $val) ? 'active ' . $tab['cls'] : '';
             ?>
                 <a href="<?= BASE_URL ?>/pages/admin/disbursement.php<?= $val ? '?status='.$val : '' ?>"
-                   class="btn-admin <?= $aktif ?>"><?= $lbl ?></a>
+                   class="disb-tab <?= $aktif ?>">
+                    <?= $tab['icon'] ?> <?= $tab['label'] ?>
+                </a>
             <?php endforeach; ?>
         </div>
 
@@ -212,19 +254,18 @@ function rp_fmt($n) { return 'Rp ' . number_format((float)$n, 0, ',', '.'); }
                             <!-- Status -->
                             <td>
                                 <?php
-                                $s = $d['status_disbursement'];
-                                $badge = match($s) {
-                                    'pending'  => 'background:#FFF9E6;color:#92660a;border:1px solid #f59e0b;',
-                                    'diproses' => 'background:#EFF6FF;color:#1d4ed8;border:1px solid #93c5fd;',
-                                    'selesai'  => 'background:#F0FFF4;color:#15803d;border:1px solid #86efac;',
-                                    default    => '',
+                                $s    = $d['status_disbursement'];
+                                $ikon = match($s) {
+                                    'pending'  => '⏳',
+                                    'diproses' => '🔄',
+                                    'selesai'  => '✅',
+                                    default    => '❓',
                                 };
-                                $ikon = match($s) { 'pending'=>'⏳', 'diproses'=>'🔄', 'selesai'=>'✅', default=>'' };
                                 ?>
-                                <span style="padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;<?= $badge ?>">
-                                    <?= $ikon . ' ' . ucfirst($s) ?>
+                                <span class="disb-badge <?= htmlspecialchars($s) ?>">
+                                    <?= $ikon ?> <?= ucfirst($s) ?>
                                 </span>
-                                <div style="font-size:10px;color:var(--color-text-muted);margin-top:4px;">
+                                <div class="disb-date">
                                     <?= date('d M Y', strtotime($d['created_at'])) ?>
                                 </div>
                             </td>
