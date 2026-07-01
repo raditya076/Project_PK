@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Ketika user memilih kos untuk dibandingkan,
  * toolbar kecil muncul di bagian bawah layar
  * mirip "keranjang belanja" yang mengambang.
@@ -245,28 +245,61 @@
 /* Cell ceklis fasilitas */
 .compare-check-yes {
     font-size: 18px;
-    color: #15803d;
+    color: #16a34a !important;
+    font-weight: bold;
 }
 .compare-check-no {
     font-size: 18px;
-    color: #ddd;
+    color: var(--color-text-muted) !important;
+    opacity: 0.45;
 }
 /* Highlight sel terbaik (harga terendah, dll) */
 .compare-best {
-    background: rgba(21,128,61,0.07) !important;
-    color: #15803d !important;
+    background: rgba(197, 0, 0, 0.06) !important;
+    color: var(--color-accent) !important;
     position: relative;
 }
 .compare-best::after {
-    content: '✓ Terbaik';
+    content: '💰 Termurah';
     display: block;
-    font-size: 9px;
-    font-weight: 700;
-    color: #15803d;
-    opacity: 0.7;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--color-accent);
+    opacity: 0.95;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    margin-top: 2px;
+    margin-top: 4px;
+}
+
+/* Link Title in mini card */
+.compare-kos-title-link {
+    color: var(--color-text);
+    text-decoration: none;
+    font-weight: 800;
+    transition: color var(--transition);
+}
+.compare-kos-title-link:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+/* WhatsApp contact button */
+.btn-wa-compare {
+    background-color: #25d366 !important;
+    color: #ffffff !important;
+    border: 1px solid #25d366 !important;
+    transition: all var(--transition) !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 700;
+    border-radius: 6px;
+}
+.btn-wa-compare:hover:not(:disabled) {
+    background-color: #128c7e !important;
+    border-color: #128c7e !important;
+    color: #ffffff !important;
 }
 
 /* Footer tabel (tombol Lihat Detail) */

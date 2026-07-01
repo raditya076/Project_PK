@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
@@ -24,8 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input['harga_per_bulan']   = (int)($_POST['harga_per_bulan']  ?? 0);
     $input['jumlah_kamar']      = (int)($_POST['jumlah_kamar']     ?? 1);
     // Koordinat GPS (opsional) — NULL jika kosong
-    $input['lat']               = !empty($_POST['lat']) ? (float)$_POST['lat'] : null;
-    $input['lng']               = !empty($_POST['lng']) ? (float)$_POST['lng'] : null;
+    $lat_val = str_replace(',', '.', trim($_POST['lat'] ?? ''));
+    $lng_val = str_replace(',', '.', trim($_POST['lng'] ?? ''));
+    $input['lat']               = ($lat_val !== '') ? (float)$lat_val : null;
+    $input['lng']               = ($lng_val !== '') ? (float)$lng_val : null;
 
     // Fasilitas: jika checkbox tidak dicentang, nilainya tidak ada di $_POST
     // Gunakan isset() untuk cek dan paksa jadi 0 atau 1
@@ -183,6 +185,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $judul_halaman = "Tambah Kos";
 $css_tambahan  = "dashboard.css";
+$extra_head = '
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+';
 
 require_once __DIR__ . '/../../components/head.php';
 require_once __DIR__ . '/../../components/navbar.php';
@@ -359,6 +365,11 @@ require_once __DIR__ . '/../../components/navbar.php';
                                        step="0.0000001" min="95" max="141"
                                        value="<?= htmlspecialchars($input['lng'] ?? '') ?>">
                             </div>
+                        </div>
+                        <!-- Picker Map Container -->
+                        <div class="col-12" style="margin-top: 12px;">
+                            <div id="picker-map" style="height: 280px; border-radius: var(--radius-sm); border: 1.5px solid var(--color-border); z-index: 1;"></div>
+                            <span style="font-size:11px; color:var(--color-text-muted); display:inline-block; margin-top:6px;">💡 Klik di peta atau geser penanda merah untuk menentukan lokasi kos secara presisi.</span>
                         </div>
                     </div>
 
@@ -581,6 +592,107 @@ function handleDrop(e) {
         tampilkanPreview(dt.files);
     }
 }
+</script>
+
+<!-- Script Map Picker Leaflet -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var latInput = document.getElementById('lat');
+    var lngInput = document.getElementById('lng');
+    var kotaInput = document.getElementById('kota');
+    
+    // Default center (Makassar / Gowa region)
+    var defaultLat = -5.1477;
+    var defaultLng = 119.4327;
+    var defaultZoom = 12;
+    
+    var initialLat = parseFloat(latInput.value);
+    var initialLng = parseFloat(lngInput.value);
+    
+    var hasInitialCoords = !isNaN(initialLat) && !isNaN(initialLng);
+    var mapCenter = hasInitialCoords ? [initialLat, initialLng] : [defaultLat, defaultLng];
+    var mapZoom = hasInitialCoords ? 15 : defaultZoom;
+    
+    var pickerMap = L.map('picker-map').setView(mapCenter, mapZoom);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+    }).addTo(pickerMap);
+    
+    var pickerMarker = null;
+    
+    if (hasInitialCoords) {
+        pickerMarker = L.marker([initialLat, initialLng], { draggable: true }).addTo(pickerMap);
+    }
+    
+    function updateCoords(lat, lng) {
+        latInput.value = lat.toFixed(7);
+        lngInput.value = lng.toFixed(7);
+    }
+    
+    // Event when user clicks on map
+    pickerMap.on('click', function(e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        
+        if (pickerMarker) {
+            pickerMarker.setLatLng(e.latlng);
+        } else {
+            pickerMarker = L.marker(e.latlng, { draggable: true }).addTo(pickerMap);
+            
+            // Event when marker is dragged
+            pickerMarker.on('dragend', function(event) {
+                var position = pickerMarker.getLatLng();
+                updateCoords(position.lat, position.lng);
+            });
+        }
+        updateCoords(lat, lng);
+    });
+    
+    if (pickerMarker) {
+        pickerMarker.on('dragend', function(event) {
+            var position = pickerMarker.getLatLng();
+            updateCoords(position.lat, position.lng);
+        });
+    }
+    
+    // Listen to changes on lat/lng text inputs to update marker position
+    function onInputChange() {
+        var lat = parseFloat(latInput.value);
+        var lng = parseFloat(lngInput.value);
+        if (!isNaN(lat) && !isNaN(lng)) {
+            var newLatLng = new L.LatLng(lat, lng);
+            if (pickerMarker) {
+                pickerMarker.setLatLng(newLatLng);
+            } else {
+                pickerMarker = L.marker(newLatLng, { draggable: true }).addTo(pickerMap);
+                pickerMarker.on('dragend', function(event) {
+                    var position = pickerMarker.getLatLng();
+                    updateCoords(position.lat, position.lng);
+                });
+            }
+            pickerMap.setView(newLatLng, 15);
+        }
+    }
+    
+    latInput.addEventListener('change', onInputChange);
+    lngInput.addEventListener('change', onInputChange);
+    
+    // Geocode helper based on city name if empty coords
+    if (kotaInput) {
+        kotaInput.addEventListener('change', function() {
+            if (latInput.value === '' && lngInput.value === '') {
+                var city = kotaInput.value.toLowerCase();
+                if (city.includes('gowa')) {
+                    pickerMap.setView([-5.2011, 119.4678], 12);
+                } else if (city.includes('makassar')) {
+                    pickerMap.setView([-5.1477, 119.4327], 12);
+                }
+            }
+        });
+    }
+});
 </script>
 
 <?php require_once __DIR__ . '/../../components/scripts.php'; ?>

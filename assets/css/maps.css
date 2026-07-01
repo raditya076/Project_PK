@@ -1,4 +1,4 @@
-﻿.leaflet-map-container {
+.leaflet-map-container {
     height: 320px;
     width: 100%;
     border-radius: var(--radius-sm);
@@ -113,4 +113,102 @@
 .popup-kos-name  { font-weight: 800; color: var(--color-text); font-size: 14px; margin-bottom: 2px; }
 .popup-kos-price { font-size: 13px; font-weight: 700; color: var(--color-accent); }
 .popup-kos-city  { font-size: 11px; color: var(--color-text-muted); }
+
+/* Custom red marker styling */
+.leaflet-kos-marker-wrapper {
+    background: transparent;
+    border: none;
+}
+.leaflet-kos-marker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #C50000; /* Red accent */
+    border: 3px solid #FAF7F2; /* Background color fallback */
+    border-radius: 50%;
+    font-size: 18px;
+    box-shadow: 0 4px 10px rgba(197, 0, 0, 0.3);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+.leaflet-kos-marker:hover {
+    transform: scale(1.15);
+    background: #a30000;
+    box-shadow: 0 6px 15px rgba(197, 0, 0, 0.4);
+}
+
+/* Toggle button active state */
+#btn-toggle-map.active {
+    background-color: var(--color-accent) !important;
+    color: #ffffff !important;
+    border-color: var(--color-accent) !important;
+}
+
+/* Search Map Popup Layout */
+.search-map-popup {
+    display: flex;
+    gap: 12px;
+    min-width: 240px;
+    max-width: 300px;
+    font-family: var(--font-main);
+}
+.popup-kos-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+.popup-kos-img-placeholder {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface-alt);
+    color: var(--color-text-muted);
+    font-size: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+.popup-kos-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.popup-kos-content .badge-kos {
+    align-self: flex-start;
+    font-size: 9px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.popup-kos-content .badge-kos.putra {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+.popup-kos-content .badge-kos.putri {
+    background-color: #fce7f3;
+    color: #9d174d;
+}
+.popup-kos-content .badge-kos.campur {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+.popup-kos-link {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-accent);
+    text-decoration: none;
+    margin-top: 4px;
+    transition: color 0.2s ease;
+}
+.popup-kos-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+}
 

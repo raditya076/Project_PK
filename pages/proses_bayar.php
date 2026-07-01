@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 ob_start(); // Tangkap semua output tidak diinginkan (PHP notices, warnings, dll)
 
 require_once __DIR__ . '/../config/koneksi.php';
@@ -128,8 +128,8 @@ curl_setopt_array($ch, [
     // Timeout: max 30 detik menunggu response
     CURLOPT_TIMEOUT        => 30,
 
-    // Verifikasi SSL (aktifkan di production)
-    CURLOPT_SSL_VERIFYPEER => true,
+    // Verifikasi SSL (aktifkan di production, matikan di sandbox/localhost agar tidak error cURL di Laragon/XAMPP)
+    CURLOPT_SSL_VERIFYPEER => (strpos(MIDTRANS_SNAP_API, 'sandbox') !== false) ? false : true,
 ]);
 
 $response    = curl_exec($ch);
