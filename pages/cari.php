@@ -53,11 +53,22 @@ $sql .= " ORDER BY $order_sql";
 $result = mysqli_query($koneksi, $sql);
 $jumlah_kos = mysqli_num_rows($result);
 
+// Ambil semua hasil ke array PHP agar bisa dipakai untuk rendering grid dan data peta
+$kos_list = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $kos_list[] = $row;
+}
+
 // Ambil daftar kota untuk filter dropdown
 $result_kota = mysqli_query($koneksi, "SELECT DISTINCT kota FROM kos WHERE status='aktif' ORDER BY kota");
 
 $judul_halaman = "Cari Kos";
 $css_tambahan = "home.css";
+$extra_head = '
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="' . BASE_URL . '/assets/css/maps.css">
+';
 
 require_once '../components/head.php';
 require_once '../components/navbar.php';
@@ -81,7 +92,7 @@ require_once '../components/navbar.php';
             <div class="row g-2 align-items-end">
 
                 <!-- Input Keyword -->
-                <div class="col-lg-4 col-md-12">
+                <div class="col-lg-3 col-md-12">
                     <input type="text" name="q" class="form-control"
                         style="font-size:14px; font-family:var(--font-main);" placeholder="Nama kos, alamat, kota..."
                         value="<?= htmlspecialchars($keyword) ?>">
@@ -119,11 +130,15 @@ require_once '../components/navbar.php';
                 </div>
 
                 <!-- Tombol -->
-                <div class="col-lg-2 col-md-4 col-6">
-                    <div style="display:flex; gap:6px;">
+                <div class="col-lg-3 col-md-12">
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
                         <button type="submit" class="btn-kosta btn" style="flex:1; font-size:13px;">Filter</button>
                         <a href="<?= BASE_URL ?>/pages/cari.php" class="btn-kosta-outline btn"
                             style="font-size:13px;">Reset</a>
+                        <button type="button" id="btn-toggle-map" class="btn-kosta-outline btn"
+                            style="font-size:13px; display:flex; align-items:center; gap:4px; white-space:nowrap;" onclick="toggleMap()">
+                            <span>🗺️</span> <span>Lihat Peta</span>
+                        </button>
                     </div>
                 </div>
 
@@ -135,9 +150,15 @@ require_once '../components/navbar.php';
 <!-- Grid Hasil -->
 <section class="section-listing">
     <div class="container">
+        
+        <!-- Peta Interaktif (hidden by default) -->
+        <div id="search-map-wrapper" style="display: none; margin-bottom: 24px;">
+            <div id="search-map" class="leaflet-map-container" style="height: 400px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); z-index: 1;"></div>
+        </div>
+
         <?php if ($jumlah_kos > 0): ?>
             <div class="row g-4">
-                <?php while ($kos = mysqli_fetch_assoc($result)):
+                <?php foreach ($kos_list as $kos):
                     $harga_format = 'Rp ' . number_format($kos['harga_per_bulan'], 0, ',', '.');
                     $kamar_sisa = $kos['jumlah_kamar'] - $kos['kamar_terisi'];
                     $hari_lalu = (time() - strtotime($kos['created_at'])) / 86400;
@@ -158,7 +179,7 @@ require_once '../components/navbar.php';
                                 <button class="kos-wishlist-btn" title="Simpan">🤍</button>
                             </div>
                             <div class="kos-card-body">
-                                <span class="badge-kos <?= $tipe_class ?>"><?= ucfirst($kos['tipe']) ?></span>
+                                <span class="badge-kos <?= $kos['tipe'] ?>"><?= ucfirst($kos['tipe']) ?></span>
                                 <h3 class="kos-card-name mt-2"><?= htmlspecialchars($kos['nama_kos']) ?></h3>
                                 <p class="kos-card-location">
                                     <span class="icon">📍</span>
@@ -188,7 +209,7 @@ require_once '../components/navbar.php';
                             </div>
                         </article>
                     </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </div>
         <?php else: ?>
             <div class="empty-state">
@@ -199,9 +220,126 @@ require_once '../components/navbar.php';
             </div>
         <?php endif; ?>
 
-        <?php mysqli_close($koneksi); ?>
     </div>
 </section>
+
+<?php
+// Siapkan data koordinat untuk peta interaktif
+$kos_map_data = [];
+foreach ($kos_list as $kos) {
+    if (!empty($kos['lat']) && !empty($kos['lng'])) {
+        $kos_map_data[] = [
+            'id' => $kos['id'],
+            'nama_kos' => $kos['nama_kos'],
+            'lat' => (float)$kos['lat'],
+            'lng' => (float)$kos['lng'],
+            'tipe' => $kos['tipe'],
+            'harga' => 'Rp ' . number_format($kos['harga_per_bulan'], 0, ',', '.'),
+            'foto' => !empty($kos['foto_utama']) ? BASE_URL . '/assets/images/kos/' . $kos['foto_utama'] : '',
+            'url' => BASE_URL . '/pages/detail.php?id=' . $kos['id'],
+            'kota' => $kos['kota']
+        ];
+    }
+}
+?>
+
+<script>
+var kosData = <?= json_encode($kos_map_data) ?>;
+var mapInitialized = false;
+var searchMap = null;
+
+function toggleMap() {
+    var wrapper = document.getElementById('search-map-wrapper');
+    var btn = document.getElementById('btn-toggle-map');
+    
+    if (wrapper.style.display === 'none') {
+        wrapper.style.display = 'block';
+        btn.innerHTML = '<span>🗺️</span> <span>Sembunyikan Peta</span>';
+        btn.classList.add('active');
+        
+        if (!mapInitialized) {
+            initSearchMap();
+        } else {
+            setTimeout(function() { searchMap.invalidateSize(); }, 100);
+        }
+    } else {
+        wrapper.style.display = 'none';
+        btn.innerHTML = '<span>🗺️</span> <span>Lihat Peta</span>';
+        btn.classList.remove('active');
+    }
+}
+
+function initSearchMap() {
+    if (kosData.length === 0) {
+        var defaultCenter = [-6.2088, 106.8456]; // Default: Jakarta
+        var defaultZoom = 11;
+        var selectedCity = <?= json_encode(strtolower($kota)) ?>;
+        if (selectedCity.includes('gowa')) {
+            defaultCenter = [-5.2011, 119.4678]; // Gowa Center (Sungguminasa)
+            defaultZoom = 12;
+        } else if (selectedCity.includes('makassar')) {
+            defaultCenter = [-5.1477, 119.4327]; // Makassar Center
+            defaultZoom = 12;
+        }
+        searchMap = L.map('search-map').setView(defaultCenter, defaultZoom);
+    } else {
+        searchMap = L.map('search-map');
+    }
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        maxZoom: 19
+    }).addTo(searchMap);
+    
+    var markersGroup = L.featureGroup();
+    
+    kosData.forEach(function(kos) {
+        var kosIcon = L.divIcon({
+            html: '<div class="leaflet-kos-marker">🏠</div>',
+            className: 'leaflet-kos-marker-wrapper',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -42]
+        });
+        
+        var popupHtml = '<div class="search-map-popup">';
+        if (kos.foto) {
+            popupHtml += '<img src="' + kos.foto + '" class="popup-kos-img" />';
+        } else {
+            popupHtml += '<div class="popup-kos-img-placeholder">🏠</div>';
+        }
+        popupHtml += '<div class="popup-kos-content">';
+        popupHtml += '  <span class="badge-kos ' + kos.tipe + '">' + kos.tipe.charAt(0).toUpperCase() + kos.tipe.slice(1) + '</span>';
+        popupHtml += '  <div class="popup-kos-name">' + kos.nama_kos + '</div>';
+        popupHtml += '  <div class="popup-kos-city">📍 ' + kos.kota + '</div>';
+        popupHtml += '  <div class="popup-kos-price">' + kos.harga + '/bln</div>';
+        popupHtml += '  <a href="' + kos.url + '" class="popup-kos-link">Lihat Detail →</a>';
+        popupHtml += '</div>';
+        popupHtml += '</div>';
+        
+        var marker = L.marker([kos.lat, kos.lng], { icon: kosIcon })
+            .bindPopup(popupHtml);
+            
+        markersGroup.addLayer(marker);
+    });
+    
+    markersGroup.addTo(searchMap);
+    
+    if (kosData.length > 0) {
+        var bounds = markersGroup.getBounds();
+        if (bounds.getNorthEast().equals(bounds.getSouthWest())) {
+            // One marker or identical coordinates
+            searchMap.setView(bounds.getCenter(), 14);
+        } else {
+            searchMap.fitBounds(bounds, { padding: [40, 40] });
+        }
+    }
+    
+    mapInitialized = true;
+}
+</script>
+
+<?php mysqli_close($koneksi); ?>
 
 <?php require_once '../components/footer.php'; ?>
 <?php require_once '../components/scripts.php'; ?>

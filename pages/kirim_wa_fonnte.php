@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 require_once __DIR__ . '/../config/koneksi.php';
@@ -104,7 +104,12 @@ curl_close($ch);
 
 if ($curl_err) {
     error_log("[Fonnte] cURL error: {$curl_err}");
-    echo json_encode(['success' => false, 'message' => 'Gagal menghubungi server Fonnte. Silakan coba lagi.']);
+    $wa_link = 'https://wa.me/' . $hp . '?text=' . urlencode("Halo, saya ingin bertanya mengenai kos *{$kos['nama_kos']}*:\n\n" . $pesan);
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Gagal menghubungi server Fonnte. Silakan coba lagi atau kirim langsung.',
+        'wa_link' => $wa_link
+    ]);
     exit;
 }
 
@@ -117,5 +122,18 @@ if (!empty($hasil['status']) && $hasil['status'] === true) {
 } else {
     $detail = $hasil['reason'] ?? ($hasil['message'] ?? 'Tidak diketahui');
     error_log("[Fonnte] Gagal kirim: " . $response);
-    echo json_encode(['success' => false, 'message' => "Pesan gagal dikirim. Detail: {$detail}"]);
+    
+    // Terjemahkan error bahasa inggris agar lebih dipahami user
+    if ($detail === 'request invalid on disconnected device') {
+        $user_detail = 'WhatsApp pengirim sedang offline';
+    } else {
+        $user_detail = $detail;
+    }
+    
+    $wa_link = 'https://wa.me/' . $hp . '?text=' . urlencode("Halo, saya ingin bertanya mengenai kos *{$kos['nama_kos']}*:\n\n" . $pesan);
+    echo json_encode([
+        'success' => false, 
+        'message' => "Pesan gagal dikirim otomatis ({$user_detail}).",
+        'wa_link' => $wa_link
+    ]);
 }

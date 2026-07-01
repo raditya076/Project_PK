@@ -274,3 +274,15 @@ body.admin-page {
 .admin-page-btn:hover, .admin-page-btn.active {
     background: var(--color-accent); color: white; border-color: var(--color-accent);
 }
+
+/* Section Grafik / Analytics */
+.admin-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+@media (max-width: 991px) {
+    .admin-charts-grid {
+        grid-template-columns: 1fr;
+    }
+}

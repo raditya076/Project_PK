@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 // Konfigurasikan session agar lebih aman sebelum memulainya

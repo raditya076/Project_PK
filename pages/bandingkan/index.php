@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 require_once __DIR__ . '/../../config/koneksi.php';
 require_once __DIR__ . '/../../config/session.php';
@@ -125,27 +125,38 @@ require_once __DIR__ . '/../../components/navbar.php';
             <!-- TABEL PERBANDINGAN -->
             <div class="compare-table-wrapper">
                 <table class="compare-table">
-
                     <!-- HEADER: Foto & Nama Kos -->
                     <thead>
                         <tr>
                             <th><!-- Kolom label kiri --></th>
                             <?php foreach ($daftar_kos as $kos): ?>
                             <th>
-                                <!-- Foto kos -->
-                                <?php if (!empty($kos['foto_utama'])): ?>
-                                    <img src="<?= BASE_URL ?>/assets/images/kos/<?= htmlspecialchars($kos['foto_utama']) ?>"
-                                         alt="<?= htmlspecialchars($kos['nama_kos']) ?>"
-                                         class="compare-kos-photo">
-                                <?php else: ?>
-                                    <div class="compare-kos-photo-placeholder">🏠</div>
-                                <?php endif; ?>
+                                <div class="compare-mini-card">
+                                    <!-- Foto kos -->
+                                    <?php if (!empty($kos['foto_utama'])): ?>
+                                        <img src="<?= BASE_URL ?>/assets/images/kos/<?= htmlspecialchars($kos['foto_utama']) ?>"
+                                             alt="<?= htmlspecialchars($kos['nama_kos']) ?>"
+                                             class="compare-kos-photo">
+                                    <?php else: ?>
+                                        <div class="compare-kos-photo-placeholder">🏠</div>
+                                    <?php endif; ?>
 
-                                <div class="compare-kos-name">
-                                    <?= htmlspecialchars($kos['nama_kos']) ?>
-                                </div>
-                                <div class="compare-kos-city">
-                                    📍 <?= htmlspecialchars($kos['kota']) ?>
+                                    <div class="compare-mini-card-body" style="text-align: center; margin-top: 8px;">
+                                        <span class="badge-kos <?= $kos['tipe'] ?>" style="margin-bottom: 6px; font-size: 10px; display: inline-block;">
+                                            <?= ucfirst($kos['tipe']) ?>
+                                        </span>
+                                        <div class="compare-kos-name">
+                                            <a href="<?= BASE_URL ?>/pages/detail.php?id=<?= $kos['id'] ?>" class="compare-kos-title-link">
+                                                <?= htmlspecialchars($kos['nama_kos']) ?>
+                                            </a>
+                                        </div>
+                                        <div class="compare-kos-price-header" style="font-weight: 800; color: var(--color-accent); font-size: 13px; margin: 4px 0;">
+                                            Rp <?= number_format($kos['harga_per_bulan'], 0, ',', '.') ?>/bln
+                                        </div>
+                                        <div class="compare-kos-city" style="font-size: 11px; color: var(--color-text-muted);">
+                                            📍 <?= htmlspecialchars($kos['kota']) ?>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Tombol hapus dari perbandingan -->
@@ -220,9 +231,9 @@ require_once __DIR__ . '/../../components/navbar.php';
                             <?php foreach ($daftar_kos as $kos): ?>
                             <td>
                                 <?php if ($kos[$kolom]): ?>
-                                    <span class="compare-check-yes">✅</span>
+                                    <span class="compare-check-yes">✔️</span>
                                 <?php else: ?>
-                                    <span class="compare-check-no">✕</span>
+                                    <span class="compare-check-no">❌</span>
                                 <?php endif; ?>
                             </td>
                             <?php endforeach; ?>
@@ -241,16 +252,35 @@ require_once __DIR__ . '/../../components/navbar.php';
 
                     </tbody>
 
-                    <!-- FOOTER: Tombol ke halaman detail -->
+                    <!-- FOOTER: Tombol ke halaman detail & WA -->
                     <tfoot>
                         <tr>
                             <td><!-- kosong --></td>
                             <?php foreach ($daftar_kos as $kos): ?>
                             <td>
-                                <a href="<?= BASE_URL ?>/pages/detail.php?id=<?= $kos['id'] ?>"
-                                   class="btn-kosta btn" style="font-size:12px; padding:8px 18px;">
-                                    Lihat Detail →
-                                </a>
+                                <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center;">
+                                    <a href="<?= BASE_URL ?>/pages/detail.php?id=<?= $kos['id'] ?>"
+                                       class="btn-kosta btn" style="font-size:12px; padding:8px 18px; width: 100%; text-align: center;">
+                                        Lihat Detail →
+                                    </a>
+                                    <?php
+                                    $wa_link = '';
+                                    if (!empty($kos['hp_pemilik'])) {
+                                        $wa_pesan = urlencode("Halo, saya tertarik dengan kos *{$kos['nama_kos']}* yang saya bandingkan di Kosta'. Apakah masih tersedia?");
+                                        $wa_link = "https://wa.me/62" . ltrim($kos['hp_pemilik'], '0') . "?text={$wa_pesan}";
+                                    }
+                                    ?>
+                                    <?php if (!empty($wa_link)): ?>
+                                        <a href="<?= $wa_link ?>" target="_blank" rel="noopener"
+                                           class="btn-wa-compare btn" style="font-size:12px; padding:8px 18px; width: 100%; text-align: center;">
+                                            💬 Hubungi via WA
+                                        </a>
+                                    <?php else: ?>
+                                        <button class="btn-wa-compare btn" disabled style="font-size:12px; padding:8px 18px; width: 100%; opacity: 0.5; cursor: not-allowed; text-align: center;">
+                                            💬 WA Tidak Tersedia
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                             <?php endforeach; ?>
                         </tr>

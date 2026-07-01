@@ -176,6 +176,8 @@ $wa_link  = !empty($kos['hp_pemilik'])
 
 // CSS tambahan: peta, perbandingan, review, transaksi
 $extra_head = '
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="' . BASE_URL . '/assets/css/maps.css">
     <link rel="stylesheet" href="' . BASE_URL . '/assets/css/compare.css">
     <link rel="stylesheet" href="' . BASE_URL . '/assets/css/review.css">
@@ -382,24 +384,51 @@ require_once __DIR__ . '/../components/navbar.php';
                 </div>
             </div>
 
-            <!-- Peta OpenStreetMap via iframe (gratis, tanpa API key) -->
+            <!-- Peta Interaktif Leaflet.js (gratis, tanpa API key) -->
             <div class="detail-block">
-                <h2 class="detail-block-title">📍 Lokasi di Peta</h2>
+                <h2 class="detail-block-title">📍 Lokasi Kos</h2>
 
                 <?php if ($has_coords): ?>
-                    <!-- Embed OpenStreetMap via iframe — tanpa library JS, selalu bekerja -->
-                    <div class="osm-map-wrapper">
-                        <iframe
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=<?= $lng_kos - 0.005 ?>,<?= $lat_kos - 0.003 ?>,<?= $lng_kos + 0.005 ?>,<?= $lat_kos + 0.003 ?>&layer=mapnik&marker=<?= $lat_kos ?>,<?= $lng_kos ?>"
-                            class="osm-iframe"
-                            allowfullscreen
-                            loading="lazy"
-                            title="Lokasi <?= htmlspecialchars($kos['nama_kos']) ?>">
-                        </iframe>
+                    <div class="leaflet-detail-wrapper" style="margin-bottom: 12px;">
+                        <div id="detail-map" class="leaflet-map-container" style="height: 350px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); z-index: 1;"></div>
                     </div>
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var lat = <?= $lat_kos ?>;
+                        var lng = <?= $lng_kos ?>;
+                        var map = L.map('detail-map', {
+                            scrollWheelZoom: false
+                        }).setView([lat, lng], 16);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+                            maxZoom: 19
+                        }).addTo(map);
+
+                        var kosIcon = L.divIcon({
+                            html: '<div class="leaflet-kos-marker">🏠</div>',
+                            className: 'leaflet-kos-marker-wrapper',
+                            iconSize: [40, 40],
+                            iconAnchor: [20, 40],
+                            popupAnchor: [0, -42]
+                        });
+
+                        L.marker([lat, lng], { icon: kosIcon })
+                            .addTo(map)
+                            .bindPopup(
+                                '<div class="popup-kos-name"><?= addslashes(htmlspecialchars($kos['nama_kos'])) ?></div>' +
+                                '<div class="popup-kos-city">📍 <?= addslashes(htmlspecialchars($kos['kota'])) ?></div>' +
+                                '<div class="popup-kos-price"><?= $harga_format ?>/bulan</div>'
+                            )
+                            .openPopup();
+
+                        // Fix tile rendering after container resize or load
+                        setTimeout(function() { map.invalidateSize(); }, 300);
+                    });
+                    </script>
                 <?php else: ?>
                     <!-- Tidak ada koordinat GPS — tampilkan fallback informatif -->
-                    <div class="map-unavailable">
+                    <div class="map-unavailable" style="border-radius: var(--radius-md);">
                         <div class="map-unav-icon">🗺️</div>
                         <p>Koordinat GPS belum ditambahkan oleh pemilik kos.</p>
                     </div>
@@ -1155,7 +1184,7 @@ function shareKos() {
             el.style.border      = '1px solid rgba(239,68,68,.35)';
             el.style.color       = '#ef4444';
         }
-        el.textContent = pesan;
+        el.innerHTML = pesan;
     }
 
     function resetFormTanya() {
@@ -1205,7 +1234,11 @@ function shareKos() {
                     // Tutup modal otomatis setelah 2.5 detik
                     setTimeout(tutupModalTanya, 2500);
                 } else {
-                    tampilAlert('error', '❌ ' + data.message);
+                    if (data.wa_link) {
+                        tampilAlert('error', '❌ ' + data.message + '<br><a href="' + data.wa_link + '" target="_blank" style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:8px 16px;background-color:#25d366;color:#fff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,0.1);transition:background-color 0.2s;" onmouseover="this.style.backgroundColor=\'#20ba5a\'" onmouseout="this.style.backgroundColor=\'#25d366\'">💬 Kirim via WhatsApp Direct</a>');
+                    } else {
+                        tampilAlert('error', '❌ ' + data.message);
+                    }
                 }
             })
             .catch(function() {

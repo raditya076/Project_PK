@@ -38,6 +38,27 @@ $booking_stat = mysqli_fetch_assoc($r);
 $r = mysqli_query($koneksi, "SELECT COUNT(*) AS total, ROUND(AVG(rating),1) AS avg_rating FROM reviews");
 $rev_stat = mysqli_fetch_assoc($r);
 
+// Query untuk grafik 1: Jumlah kos per kota
+$r_kota = mysqli_query($koneksi, "SELECT kota, COUNT(*) AS jumlah FROM kos GROUP BY kota ORDER BY jumlah DESC");
+$chart_kota_labels = [];
+$chart_kota_data = [];
+while ($row = mysqli_fetch_assoc($r_kota)) {
+    $chart_kota_labels[] = $row['kota'];
+    $chart_kota_data[] = (int)$row['jumlah'];
+}
+
+// Query untuk grafik 2: Tren booking per bulan (12 bulan terakhir)
+$r_booking = mysqli_query($koneksi, "SELECT DATE_FORMAT(created_at, '%Y-%m') AS bulan, COUNT(*) AS jumlah FROM bookings GROUP BY bulan ORDER BY bulan ASC LIMIT 12");
+$chart_booking_labels = [];
+$chart_booking_data = [];
+while ($row = mysqli_fetch_assoc($r_booking)) {
+    $bulan_raw = $row['bulan']; // format YYYY-MM
+    $timestamp = strtotime($bulan_raw . "-01");
+    $bulan_formatted = date('M Y', $timestamp);
+    $chart_booking_labels[] = $bulan_formatted;
+    $chart_booking_data[] = (int)$row['jumlah'];
+}
+
 // ── Data Terbaru ─────────────────────────────────────────────
 // 5 user terbaru
 $q_users = mysqli_query($koneksi,
@@ -55,6 +76,9 @@ $q_bookings = mysqli_query($koneksi,
 $judul_halaman = "Dashboard Admin";
 $css_tambahan  = "admin.css";
 $body_class    = "admin-page";
+$extra_head    = '
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+';
 require_once __DIR__ . '/../../components/head.php';
 require_once __DIR__ . '/../../components/navbar.php';
 
@@ -118,6 +142,26 @@ function rp(int $n): string { return 'Rp ' . number_format($n, 0, ',', '.'); }
                     <div class="admin-stat-value"><?= $rev_stat['avg_rating'] ?: '-' ?></div>
                     <div class="admin-stat-label">Rating Rata-rata</div>
                     <div class="admin-stat-change up">dari <?= $rev_stat['total'] ?> ulasan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Section Grafik/Analytics ── -->
+        <div class="admin-charts-grid" style="margin-bottom: 28px;">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-title">📊 Sebaran Kos per Kota</div>
+                </div>
+                <div class="chart-container" style="position: relative; height: 300px; padding: 10px;">
+                    <canvas id="chartKosKota"></canvas>
+                </div>
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-title">📈 Tren Booking per Bulan</div>
+                </div>
+                <div class="chart-container" style="position: relative; height: 300px; padding: 10px;">
+                    <canvas id="chartTrenBooking"></canvas>
                 </div>
             </div>
         </div>
@@ -210,6 +254,153 @@ function rp(int $n): string { return 'Rp ' . number_format($n, 0, ',', '.'); }
 
     </main><!-- /admin-main -->
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Font family global untuk Chart.js
+    Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+    Chart.defaults.color = "#4b5563"; // Tailwind gray-600
+
+    // --- CHART 1: Bar Chart (Sebaran Kos per Kota) ---
+    var ctxKota = document.getElementById('chartKosKota').getContext('2d');
+    var labelsKota = <?= json_encode($chart_kota_labels) ?>;
+    var dataKota = <?= json_encode($chart_kota_data) ?>;
+    
+    // Gradient untuk bar chart
+    var gradientRed = ctxKota.createLinearGradient(0, 0, 0, 300);
+    gradientRed.addColorStop(0, '#C50000');
+    gradientRed.addColorStop(1, 'rgba(197, 0, 0, 0.3)');
+
+    var chartKota = new Chart(ctxKota, {
+        type: 'bar',
+        data: {
+            labels: labelsKota,
+            datasets: [{
+                label: 'Jumlah Kos',
+                data: dataKota,
+                backgroundColor: gradientRed,
+                borderColor: '#C50000',
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 1500,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    padding: 12,
+                    backgroundColor: '#1f2937',
+                    titleColor: '#f9fafb',
+                    bodyColor: '#f3f4f6',
+                    cornerRadius: 6,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: { size: 11 }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: { size: 11, weight: '600' }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // --- CHART 2: Line Chart (Tren Booking) ---
+    var ctxBooking = document.getElementById('chartTrenBooking').getContext('2d');
+    var labelsBooking = <?= json_encode($chart_booking_labels) ?>;
+    var dataBooking = <?= json_encode($chart_booking_data) ?>;
+
+    // Gradient fill untuk line chart
+    var gradientFill = ctxBooking.createLinearGradient(0, 0, 0, 300);
+    gradientFill.addColorStop(0, 'rgba(197, 0, 0, 0.15)');
+    gradientFill.addColorStop(1, 'rgba(197, 0, 0, 0.0)');
+
+    var chartBooking = new Chart(ctxBooking, {
+        type: 'line',
+        data: {
+            labels: labelsBooking,
+            datasets: [{
+                label: 'Jumlah Booking',
+                data: dataBooking,
+                fill: true,
+                backgroundColor: gradientFill,
+                borderColor: '#C50000',
+                borderWidth: 3,
+                pointBackgroundColor: '#C50000',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 2000,
+                easing: 'easeInOutCubic'
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    padding: 12,
+                    backgroundColor: '#1f2937',
+                    titleColor: '#f9fafb',
+                    bodyColor: '#f3f4f6',
+                    cornerRadius: 6,
+                    displayColors: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        font: { size: 11 }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        font: { size: 11, weight: '600' }
+                    },
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
 
 <?php
 mysqli_close($koneksi);
